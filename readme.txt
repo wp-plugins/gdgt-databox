@@ -10,7 +10,7 @@ Display gadget specifications, reviews, discussions, and answers alongside your 
 
 == Description ==
 
-The [gdgt][http://gdgt.com/] Databox adds relative product information to the end of a post based on post tags as well as products you manually include or exclude through a meta box in your post editor.
+The [gdgt](http://gdgt.com/) Databox adds relative product information to the end of a post based on post tags as well as products you manually include or exclude through a meta box in your post editor.
 
 The Databox displays product specifications, reviews, support answers, and user discussions for matching products.
 
@@ -57,7 +57,7 @@ The gdgt Databox requires at least 550 available pixels in your theme's main con
 
 = Does the gdgt Databox meet accessibility requirements? =
 
-The gdgt Databox plugin includes [WAI-ARIA][http://www.w3.org/WAI/intro/aria] markup for compatibility with screen readers and other assistive software. These extra rules should help sites meet Section 508 compliance needs in the United States.
+The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) markup for compatibility with screen readers and other assistive software. These extra rules should help sites meet Section 508 compliance needs in the United States.
 
 = May I customize display of the Databox? =
 
@@ -69,7 +69,7 @@ The gdgt Databox plugin is currently United States English only. Product specifi
 
 = Does gdgt track my users in any way? =
 
-The gdgt Databox uses [Google Analytics][http://www.google.com/analytics/] to track Databox views and interactions.
+The gdgt Databox uses [Google Analytics](http://www.google.com/analytics/) to track Databox views and interactions.
 
 == Screenshots ==
 
