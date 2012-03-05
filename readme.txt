@@ -82,4 +82,4 @@ The gdgt Databox uses [Google Analytics](http://www.google.com/analytics/) to tr
 
 = 1.0 =
 
-* Initial release.
+* Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post.
