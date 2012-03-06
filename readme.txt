@@ -2,7 +2,7 @@
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.01
+Stable tag: 1.02
 License: GPLv2 or later
 Tags: gdgt, gadgets, consumer electronics, reviews
 
@@ -75,6 +75,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.02 =
+
+* Featured image fallback for themes without post thumbnail support
+
 = 1.01 =
 
 * PHP 5.2.4+ compatibility
@@ -85,6 +89,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post.
 
 == Upgrade Notice ==
+
+= 1.02 =
+
+Featured image fallback for themes without post thumbnail support.
 
 = 1.01 =
 
