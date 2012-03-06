@@ -50,7 +50,7 @@ class GDGT_Databox {
 		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 
 		// possibly output content at the end of the post
-		add_filter( 'the_content', array( &$this, 'after_content' ), 20, 1 );
+		add_filter( 'the_content', array( &$this, 'after_content' ), 1, 1 );
 
 		// shortcode could happen
 		remove_shortcode( 'gdgt' );
