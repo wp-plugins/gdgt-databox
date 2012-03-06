@@ -88,7 +88,7 @@ class GDGT_Databox_Discussions {
 		$url = esc_url( $discussion->url, array( 'http', 'https' ) );
 		$item = '<li class="gdgt-thread-row"><span class="gdgt-thread-replies">';
 		$item .= '<a class="gdgt-reply-count" href="' . $url . '"' . $anchor_target;
-		$action = static::single_discussion_action_text( $discussion->total_replies );
+		$action = GDGT_Databox_Discussions::single_discussion_action_text( $discussion->total_replies );
 		$item .= ' title="' . esc_attr( $action . ': ' . $discussion->subject ) . '"';
 		$item .= '>' . esc_html( $action ) . '</a></span>';
 		$item .= '<a class="gdgt-user-image" href="' . $url . '"' . $anchor_target . '><noscript class="img"><img alt="';
@@ -147,7 +147,7 @@ class GDGT_Databox_Discussions {
 	 * @return string HTML markup
 	 */
 	public function render( $displayed = false, $anchor_target = '' ) {
-		$html = '<div class="gdgt-content ' . static::content_class . '" role="tabpanel" ';
+		$html = '<div class="gdgt-content ' . GDGT_Databox_Discussions::content_class . '" role="tabpanel" ';
 		if ( $displayed === true )
 			$html .= 'aria-hidden="false"';
 		else
@@ -160,7 +160,7 @@ class GDGT_Databox_Discussions {
 			}
 			$html .= '</ol>';
 		} else {
-			$html .= static::render_no_content();
+			$html .= GDGT_Databox_Discussions::render_no_content();
 		}
 		$html .= $this->render_content_right( $anchor_target );
 		$html .= '</div>';

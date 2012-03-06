@@ -48,55 +48,55 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function admin_init() {
 		// warn about no API key
-		static::api_key_reminder();
+		GDGT_Settings::api_key_reminder();
 
 		if ( isset( $this->hook_suffix ) && is_string( $this->hook_suffix ) )
 			add_action( 'admin_print_scripts-' . $this->hook_suffix, array( &$this, 'enqueue_scripts' ) );
 
 		// API key
-		add_settings_section( 'gdgt_access', __( 'API access', static::PLUGIN_SLUG ), array( &$this, 'settings_page_access_section' ), static::PLUGIN_SLUG );
-		register_setting( static::PLUGIN_SLUG, 'gdgt_apikey', array( &$this, 'sanitize_api_key' ) );
-		add_settings_field( 'gdgt_apikey', __('API key', static::PLUGIN_SLUG ), array( &$this, 'display_api_key' ), static::PLUGIN_SLUG, 'gdgt_access' );
+		add_settings_section( 'gdgt_access', __( 'API access', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_access_section' ), GDGT_Settings::PLUGIN_SLUG );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_apikey', array( &$this, 'sanitize_api_key' ) );
+		add_settings_field( 'gdgt_apikey', __('API key', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_api_key' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_access' );
 
 		// customize module
-		add_settings_section( 'gdgt_data_box', __( 'Product display settings', static::PLUGIN_SLUG ), array( &$this, 'settings_page_module_section' ), static::PLUGIN_SLUG );
-		foreach ( static::tab_choices() as $id => $label ) {
+		add_settings_section( 'gdgt_data_box', __( 'Product display settings', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_module_section' ), GDGT_Settings::PLUGIN_SLUG );
+		foreach ( GDGT_Settings::tab_choices() as $id => $label ) {
 			if ( empty($id) || empty($label) )
 				continue;
 			$shortname = substr( $id, 5 );
 			$display_method = 'display_' . $shortname;
 			if ( method_exists( $this, $display_method ) ) {
-				register_setting( static::PLUGIN_SLUG, $id, array( &$this, 'sanitize_' . $shortname ) );
-				add_settings_field( $id, $label, array( &$this, $display_method ), static::PLUGIN_SLUG, 'gdgt_data_box' );
+				register_setting( GDGT_Settings::PLUGIN_SLUG, $id, array( &$this, 'sanitize_' . $shortname ) );
+				add_settings_field( $id, $label, array( &$this, $display_method ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_data_box' );
 			}
 			unset( $shortname );
 			unset( $display_method );
 		}
 
-		register_setting( static::PLUGIN_SLUG, 'gdgt_new_tabs', array( &$this, 'sanitize_new_tabs' ) );
-		add_settings_field( 'gdgt_new_tabs', sprintf( __( 'Automatically display new tabs as %s releases them.', static::PLUGIN_SLUG ), 'gdgt' ), array( &$this, 'display_new_tabs' ), static::PLUGIN_SLUG, 'gdgt_data_box' );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_new_tabs', array( &$this, 'sanitize_new_tabs' ) );
+		add_settings_field( 'gdgt_new_tabs', sprintf( __( 'Automatically display new tabs as %s releases them.', GDGT_Settings::PLUGIN_SLUG ), 'gdgt' ), array( &$this, 'display_new_tabs' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_data_box' );
 
 		// multiple product display
-		add_settings_section( 'gdgt_product_list', __( 'Databox display settings', static::PLUGIN_SLUG ), array( &$this, 'settings_page_product_list_section' ), static::PLUGIN_SLUG );
-		register_setting( static::PLUGIN_SLUG, 'gdgt_max_products', array( &$this, 'sanitize_max_products' ) );
-		add_settings_field( 'gdgt_max_products', __( 'Maximum products per Databox', static::PLUGIN_SLUG ), array( &$this, 'display_max_products' ), static::PLUGIN_SLUG, 'gdgt_product_list' );
-		//register_setting( static::PLUGIN_SLUG, 'gdgt_module_nav_style', array( &$this, 'sanitize_module_nav_style' ) );
-		//add_settings_field( 'gdgt_module_nav_style', __( 'Module navigation style', static::PLUGIN_SLUG ), array( &$this, 'display_module_nav_style' ), static::PLUGIN_SLUG, 'gdgt_product_list' );
+		add_settings_section( 'gdgt_product_list', __( 'Databox display settings', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_product_list_section' ), GDGT_Settings::PLUGIN_SLUG );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_max_products', array( &$this, 'sanitize_max_products' ) );
+		add_settings_field( 'gdgt_max_products', __( 'Maximum products per Databox', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_max_products' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
+		//register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_module_nav_style', array( &$this, 'sanitize_module_nav_style' ) );
+		//add_settings_field( 'gdgt_module_nav_style', __( 'Module navigation style', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_module_nav_style' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 		//add_action( 'update_option_gdgt_module_nav_style', array( &$this, 'update_option_module_nav_style' ), 10, 2 );
 		if ( absint( get_option( 'gdgt_max_products', 10 ) ) > 1 ) {
-			register_setting( static::PLUGIN_SLUG, 'gdgt_expand_products', array( &$this, 'sanitize_expand_products' ) );
-			add_settings_field( 'gdgt_expand_products', __( 'Auto-expand', static::PLUGIN_SLUG ), array( &$this, 'display_expand_products' ), static::PLUGIN_SLUG, 'gdgt_product_list' );
+			register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_expand_products', array( &$this, 'sanitize_expand_products' ) );
+			add_settings_field( 'gdgt_expand_products', __( 'Auto-expand', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_expand_products' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 			//add_action( 'update_option_gdgt_expand_products', array( &$this, 'update_option_expand_products' ), 10, 2 );
 		}
-		register_setting( static::PLUGIN_SLUG, 'gdgt_schema_org', array( &$this, 'sanitize_schema_org' ) );
-		add_settings_field( 'gdgt_schema_org', __( 'Schema.org microdata', static::PLUGIN_SLUG ), array( &$this, 'display_schema_org' ), static::PLUGIN_SLUG, 'gdgt_product_list' );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_schema_org', array( &$this, 'sanitize_schema_org' ) );
+		add_settings_field( 'gdgt_schema_org', __( 'Schema.org microdata', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_schema_org' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 
 		// overrides
-		add_settings_section( 'gdgt_restrictions', __( 'Access and restrictions', static::PLUGIN_SLUG ), array( &$this, 'settings_page_restrictions_section' ), static::PLUGIN_SLUG );
-		register_setting( static::PLUGIN_SLUG , 'gdgt_min_disable_capability', array( &$this, 'sanitize_min_disable_capability' ) );
-		add_settings_field( 'gdgt_min_disable_capability', __( 'Disable capability', static::PLUGIN_SLUG ), array( &$this, 'display_min_disable_capability' ), static::PLUGIN_SLUG, 'gdgt_restrictions' );
-		register_setting( static::PLUGIN_SLUG, 'gdgt_stop_tags', array( &$this, 'sanitize_stop_tags' ) );
-		add_settings_field( 'gdgt_stop_tags', __( 'Stop-tags', static::PLUGIN_SLUG ), array( &$this, 'display_stop_tags' ), static::PLUGIN_SLUG, 'gdgt_restrictions' );
+		add_settings_section( 'gdgt_restrictions', __( 'Access and restrictions', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_restrictions_section' ), GDGT_Settings::PLUGIN_SLUG );
+		register_setting( GDGT_Settings::PLUGIN_SLUG , 'gdgt_min_disable_capability', array( &$this, 'sanitize_min_disable_capability' ) );
+		add_settings_field( 'gdgt_min_disable_capability', __( 'Disable capability', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_min_disable_capability' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_restrictions' );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_stop_tags', array( &$this, 'sanitize_stop_tags' ) );
+		add_settings_field( 'gdgt_stop_tags', __( 'Stop-tags', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_stop_tags' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_restrictions' );
 		//add_action( 'update_option_gdgt_stop_tags', array( &$this, 'stop_tags_update' ), 10, 2 );
 		//add_action( 'add_option_gdgt_stop_tags', array( &$this, 'stop_tags_update' ), 10, 2 );
 	}
@@ -109,10 +109,10 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public static function tab_choices() {
 		return array(
-			'gdgt_specs_tab' => __( 'Key specs', static::PLUGIN_SLUG ),
-			'gdgt_reviews_tab' => __( 'Reviews', static::PLUGIN_SLUG ),
-			'gdgt_answers_tab' => __( 'Answers', static::PLUGIN_SLUG ),
-			'gdgt_discussions_tab' => __( 'Discussions', static::PLUGIN_SLUG )
+			'gdgt_specs_tab' => __( 'Key specs', GDGT_Settings::PLUGIN_SLUG ),
+			'gdgt_reviews_tab' => __( 'Reviews', GDGT_Settings::PLUGIN_SLUG ),
+			'gdgt_answers_tab' => __( 'Answers', GDGT_Settings::PLUGIN_SLUG ),
+			'gdgt_discussions_tab' => __( 'Discussions', GDGT_Settings::PLUGIN_SLUG )
 		);
 	}
 
@@ -125,9 +125,9 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public static function capability_choices() {
 		return array(
-			'manage_options' => __( 'Manage options (Administrator)', static::PLUGIN_SLUG ),
-			'publish_posts' => __( 'Publish post (Author)', static::PLUGIN_SLUG ),
-			'edit_posts' => __( 'Edit post (Contributor)', static::PLUGIN_SLUG )
+			'manage_options' => __( 'Manage options (Administrator)', GDGT_Settings::PLUGIN_SLUG ),
+			'publish_posts' => __( 'Publish post (Author)', GDGT_Settings::PLUGIN_SLUG ),
+			'edit_posts' => __( 'Edit post (Contributor)', GDGT_Settings::PLUGIN_SLUG )
 		);
 	}
 
@@ -151,8 +151,8 @@ class GDGT_Settings extends GDGT_Base {
 	}
 
 	public static function api_key_admin_notice() {
-		echo '<div id="gdgt-notice" class="updated fade"><p><strong>' . __( 'gdgt API key needed', static::PLUGIN_SLUG ) . '</strong> ';
-		echo sprintf( __('Please <a href="%s">enter a valid API key</a> to begin using the %s.'), 'options-general.php?page=' . static::PLUGIN_SLUG, static::PLUGIN_NAME );
+		echo '<div id="gdgt-notice" class="updated fade"><p><strong>' . __( 'gdgt API key needed', GDGT_Settings::PLUGIN_SLUG ) . '</strong> ';
+		echo sprintf( __('Please <a href="%s">enter a valid API key</a> to begin using the %s.'), 'options-general.php?page=' . GDGT_Settings::PLUGIN_SLUG, GDGT_Settings::PLUGIN_NAME );
 		echo '</p></div>';
 		update_option( 'gdgt_activation_run_once', '1' );
 	}
@@ -167,7 +167,7 @@ class GDGT_Settings extends GDGT_Base {
 	 */
     public function plugin_action_links( $links, $file ) {
     	if ( $file === plugin_basename( dirname(__FILE__) . '/plugin.php' ) )
-			$links[] = '<a href="options-general.php?page=' . static::PLUGIN_SLUG . '">' . __('Settings') . '</a>';
+			$links[] = '<a href="options-general.php?page=' . GDGT_Settings::PLUGIN_SLUG . '">' . __('Settings') . '</a>';
 		return $links;
     }
 
@@ -177,7 +177,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 */
 	public function settings_menu_item() {
-		$this->hook_suffix = add_options_page( static::PLUGIN_NAME, static::PLUGIN_NAME, 'manage_options', static::PLUGIN_SLUG, array( &$this, 'settings_page' ) );
+		$this->hook_suffix = add_options_page( GDGT_Settings::PLUGIN_NAME, GDGT_Settings::PLUGIN_NAME, 'manage_options', GDGT_Settings::PLUGIN_SLUG, array( &$this, 'settings_page' ) );
 	}
 
 	/**
@@ -186,8 +186,8 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( static::PLUGIN_SLUG . '-settings-js', plugins_url( 'static/js/gdgt-settings.js', __FILE__ ), array( 'jquery' ), static::PLUGIN_VERSION );
-		wp_enqueue_style( 'gdgt-settings', plugins_url( 'static/css/settings.css', __FILE__ ), array(), static::PLUGIN_VERSION );
+		wp_enqueue_script( GDGT_Settings::PLUGIN_SLUG . '-settings-js', plugins_url( 'static/js/gdgt-settings.js', __FILE__ ), array( 'jquery' ), GDGT_Settings::PLUGIN_VERSION );
+		wp_enqueue_style( 'gdgt-settings', plugins_url( 'static/css/settings.css', __FILE__ ), array(), GDGT_Settings::PLUGIN_VERSION );
 	}
 
 	/**
@@ -199,10 +199,10 @@ class GDGT_Settings extends GDGT_Base {
 	 * @uses do_settings_sections()
 	 */
 	public function settings_page() {
-		echo '<div class="wrap"><header><h2>' . esc_html( sprintf( __( '%s Settings', static::PLUGIN_SLUG ), static::PLUGIN_NAME ) ) . '</h2></header><form method="post" action="options.php">';
-		settings_fields( static::PLUGIN_SLUG );
+		echo '<div class="wrap"><header><h2>' . esc_html( sprintf( __( '%s Settings', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</h2></header><form method="post" action="options.php">';
+		settings_fields( GDGT_Settings::PLUGIN_SLUG );
 		settings_errors();
-		do_settings_sections( static::PLUGIN_SLUG );
+		do_settings_sections( GDGT_Settings::PLUGIN_SLUG );
 		echo '<p class="submit"><input type="submit" class="button-primary" value="' . esc_attr( __('Save Changes') ) . '" /></p></form></div>';
 	}
 
@@ -212,8 +212,8 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 */
 	public function settings_page_access_section() {
-		echo '<p>' . esc_html( sprintf( __( 'Your secret %s API key is required to enable Databox access.', static::PLUGIN_SLUG ), 'gdgt' ) );
-		echo '<br /><a href="http://help.gdgt.com/customer/portal/articles/372033-gdgt-api-key" target="_blank">' . esc_html( __( 'Visit our API help page', static::PLUGIN_SLUG ) ) . '</a> ' . esc_html( __( 'to learn more about gdgt API keys or to request a new key.', static::PLUGIN_SLUG ) ) . '</p>';
+		echo '<p>' . esc_html( sprintf( __( 'Your secret %s API key is required to enable Databox access.', GDGT_Settings::PLUGIN_SLUG ), 'gdgt' ) );
+		echo '<br /><a href="http://help.gdgt.com/customer/portal/articles/372033-gdgt-api-key" target="_blank">' . esc_html( __( 'Visit our API help page', GDGT_Settings::PLUGIN_SLUG ) ) . '</a> ' . esc_html( __( 'to learn more about gdgt API keys or to request a new key.', GDGT_Settings::PLUGIN_SLUG ) ) . '</p>';
 	}
 
 	/**
@@ -222,7 +222,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 */
 	public function settings_page_restrictions_section() {
-		echo '<p>' .  esc_html( __( 'Configure how the Databox can be manually or automatically disabled.', static::PLUGIN_SLUG ) ) . '</p>';
+		echo '<p>' .  esc_html( __( 'Configure how the Databox can be manually or automatically disabled.', GDGT_Settings::PLUGIN_SLUG ) ) . '</p>';
 	}
 
 	/**
@@ -232,7 +232,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 */
 	public function settings_page_product_list_section() {
-		echo '<p>'. esc_html( __( 'Customize Databox appearance and behavior.', static::PLUGIN_SLUG ) ) . '</p>';
+		echo '<p>'. esc_html( __( 'Customize Databox appearance and behavior.', GDGT_Settings::PLUGIN_SLUG ) ) . '</p>';
 	}
 
 	/**
@@ -242,7 +242,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 */
 	public function settings_page_module_section() {
-		echo '<p>' . esc_html( __( 'Customize the tabs shown for each product module.', static::PLUGIN_SLUG ) ) . '</p>';
+		echo '<p>' . esc_html( __( 'Customize the tabs shown for each product module.', GDGT_Settings::PLUGIN_SLUG ) ) . '</p>';
 	}
 
 	/**
@@ -269,9 +269,9 @@ class GDGT_Settings extends GDGT_Base {
 	public static function is_valid_api_key( $api_key ) {
 		if ( ! is_string( $api_key ) || empty( $api_key ) || strlen( $api_key ) > 32 )
 			return false;
-		$args = static::base_request_args();
+		$args = GDGT_Settings::base_request_args();
 		$args['body'] = json_encode( array( 'api_key' => $api_key ) );
-		$response = wp_remote_post( static::BASE_URL . 'v1/validate/', $args );
+		$response = wp_remote_post( GDGT_Settings::BASE_URL . 'v1/validate/', $args );
 		unset( $args );
 
 		if ( is_wp_error( $response ) )
@@ -301,11 +301,11 @@ class GDGT_Settings extends GDGT_Base {
 		$old_value = get_option( $id );
 		if ( ! empty( $old_value ) && $old_value === $key )
 			return $key;
-		else if ( static::is_valid_api_key($key) ) {
-			add_settings_error( $id, 'api-key-updated', __( 'API key updated!', static::PLUGIN_SLUG ), 'updated' );
+		else if ( GDGT_Settings::is_valid_api_key( $key ) ) {
+			add_settings_error( $id, 'api-key-updated', __( 'API key updated!', GDGT_Settings::PLUGIN_SLUG ), 'updated' );
 			return $key;
 		}
-		add_settings_error( $id, 'invalid-api-key', sprintf( __( 'Invalid API key entered. Please check your documentation and/or contact %s.', static::PLUGIN_SLUG ), 'gdgt' ), 'error' );
+		add_settings_error( $id, 'invalid-api-key', sprintf( __( 'Invalid API key entered. Please check your documentation and/or contact %s.', GDGT_Settings::PLUGIN_SLUG ), 'gdgt' ), 'error' );
 		return '';
 	}
 
@@ -318,7 +318,7 @@ class GDGT_Settings extends GDGT_Base {
 		$id = 'gdgt_min_disable_capability';
 		$default_value = 'edit_posts';
 		$existing_value = get_option( $id, 'edit_posts' );
-		$allowed_values = static::capability_choices();
+		$allowed_values = GDGT_Settings::capability_choices();
 		if ( ! array_key_exists( $existing_value, $allowed_values ) )
 			$exiting_value = $default_value;
 		echo '<select name="' . $id . '" id="' . $id . '">';
@@ -330,8 +330,8 @@ class GDGT_Settings extends GDGT_Base {
 		}
 		echo '</select>';
 		echo '<p><label for="' . $id . '">';
-		echo esc_html( sprintf( __( 'The minimum capability needed to disable the %s on a single post.', static::PLUGIN_SLUG ), static::PLUGIN_NAME ) );
-		echo '</label><br /><a href="http://codex.wordpress.org/Roles_and_Capabilities" target="_blank">' . esc_html( __( 'Further details on WordPress roles and capabilities', static::PLUGIN_SLUG ) ) . '</a></p>';
+		echo esc_html( sprintf( __( 'The minimum capability needed to disable the %s on a single post.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) );
+		echo '</label><br /><a href="http://codex.wordpress.org/Roles_and_Capabilities" target="_blank">' . esc_html( __( 'Further details on WordPress roles and capabilities', GDGT_Settings::PLUGIN_SLUG ) ) . '</a></p>';
 	}
 
 	/**
@@ -339,7 +339,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * Display an updated message if value changed
 	 *
 	 * @since 1.0
-	 * @see static::capability_choices
+	 * @see static::capability_choices()
 	 * @param string $capability WordPress user capability
 	 * @param string WordPress user capability
 	 */
@@ -347,11 +347,11 @@ class GDGT_Settings extends GDGT_Base {
 		$capability = trim( $capability );
 		$option_name = 'gdgt_min_disable_capability';
 		$default_value = 'edit_posts';
-		if ( ! array_key_exists( $capability, static::capability_choices() ) )
+		if ( ! array_key_exists( $capability, GDGT_Settings::capability_choices() ) )
 			$capability = $default_value;
 		$existing_value = get_option( $option_name, $default_value );
 		if ( $capability != $existing_value )
-			add_settings_error( $option_name, 'min-disable-capability-updated', sprintf( __( 'Permissions changed: only users with %s capability may disable the %s.', static::PLUGIN_SLUG ), '<kbd>' . $capability . '</kbd>', static::PLUGIN_NAME ), 'updated' );
+			add_settings_error( $option_name, 'min-disable-capability-updated', sprintf( __( 'Permissions changed: only users with %s capability may disable the %s.', GDGT_Settings::PLUGIN_SLUG ), '<kbd>' . $capability . '</kbd>', GDGT_Settings::PLUGIN_NAME ), 'updated' );
 		return $capability;
 	}
 
@@ -369,8 +369,8 @@ class GDGT_Settings extends GDGT_Base {
 		else
 			echo ' value="' . esc_attr( $existing_value ) . '"';
 		echo ' autocomplete="off" />';
-		echo '<p><label for="' . $id . '">' . esc_html( sprintf( __( 'Posts containing any of the specified stop-tags will not display the %s.', static::PLUGIN_SLUG ), static::PLUGIN_NAME ) ) . '<br />';
-		echo esc_html( __( 'Enter one or more tags separated by a comma (,).', static::PLUGIN_SLUG ) ) . '</label></p></div>';
+		echo '<p><label for="' . $id . '">' . esc_html( sprintf( __( 'Posts containing any of the specified stop-tags will not display the %s.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '<br />';
+		echo esc_html( __( 'Enter one or more tags separated by a comma (,).', GDGT_Settings::PLUGIN_SLUG ) ) . '</label></p></div>';
 		echo '<script type="text/javascript">gdgt.settings.labels.add=' . json_encode( __( 'Add' ) ) . '</script>'; // text should exist in WP translation: same text as post box edit
 	}
 
@@ -409,14 +409,14 @@ class GDGT_Settings extends GDGT_Base {
 		}
 		foreach( $existing_stop_tags as $stop_tag ) {
 			if ( ! in_array( $stop_tag, $tag_array, true ) )
-				add_settings_error( $option_name, 'gdgt_stop_tag_' . md5( $stop_tag ), sprintf( __( '%s now enabled for any post tagged "%s."', static::PLUGIN_SLUG ), static::PLUGIN_NAME, '<kbd>' . $stop_tag . '</kbd>' ), 'updated' );
+				add_settings_error( $option_name, 'gdgt_stop_tag_' . md5( $stop_tag ), sprintf( __( '%s now enabled for any post tagged "%s."', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME, '<kbd>' . $stop_tag . '</kbd>' ), 'updated' );
 		}
 		// TODO: submit each matching post to gdgt for syndication removal
 		unset( $existing_stop_tags );
 
 		if ( ! empty( $tag_array ) ) {
 			foreach( $new_tags as $stop_tag ) {
-				add_settings_error( $option_name, 'gdgt_stop_tag_' . md5( $stop_tag ), sprintf( __( '%s now disabled for any post tagged "%s."', static::PLUGIN_SLUG ), static::PLUGIN_NAME, '<kbd>' . $stop_tag . '</kbd>' ), 'updated' );
+				add_settings_error( $option_name, 'gdgt_stop_tag_' . md5( $stop_tag ), sprintf( __( '%s now disabled for any post tagged "%s."', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME, '<kbd>' . $stop_tag . '</kbd>' ), 'updated' );
 			}
 			return implode( ',', $tag_array );
 		}
@@ -483,7 +483,7 @@ class GDGT_Settings extends GDGT_Base {
 			$max_products = $default;
 		$existing_value = absint( get_option( $option_name, 10 ) );
 		if ( $max_products != $existing_value )
-			add_settings_error( $option_name, $option_name . '_updated', sprintf( __( 'The %s will display a maximum of %d %s.', static::PLUGIN_SLUG ), static::PLUGIN_NAME, $max_products, $max_products === 1 ? __( 'product', static::PLUGIN_SLUG) : __( 'products', static::PLUGIN_SLUG ) ), 'updated' );
+			add_settings_error( $option_name, $option_name . '_updated', sprintf( __( 'The %s will display a maximum of %d %s.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME, $max_products, $max_products === 1 ? __( 'product', GDGT_Settings::PLUGIN_SLUG) : __( 'products', GDGT_Settings::PLUGIN_SLUG ) ), 'updated' );
 		return $max_products;
 	}
 
@@ -496,8 +496,8 @@ class GDGT_Settings extends GDGT_Base {
 		$default_value = 'manual';
 		$existing_value = get_option( $id, $default_value );
 		$choices = array(
-			'accordion' => __( 'Accordion: collapse the previously expanded module when a viewer selects a new module.', static::PLUGIN_SLUG ),
-			'manual' => __( 'Manual: expand and collapse individual modules.' , static::PLUGIN_SLUG )
+			'accordion' => __( 'Accordion: collapse the previously expanded module when a viewer selects a new module.', GDGT_Settings::PLUGIN_SLUG ),
+			'manual' => __( 'Manual: expand and collapse individual modules.' , GDGT_Settings::PLUGIN_SLUG )
 		);
 		if ( ! array_key_exists( $existing_value, $choices ) )
 			$existing_value = $default_value;
@@ -553,7 +553,7 @@ class GDGT_Settings extends GDGT_Base {
 		echo '<input type="checkbox" name="' . $id . '" id="' . $id . '" value="1"';
 		if ( $existing_value === true )
 			echo ' checked';
-		echo ' /> <label for="' . $id . '">' . esc_html( __( 'Expand all products on initial page load', static::PLUGIN_SLUG ) ) . '</label>';
+		echo ' /> <label for="' . $id . '">' . esc_html( __( 'Expand all products on initial page load', GDGT_Settings::PLUGIN_SLUG ) ) . '</label>';
 	}
 
 	/**
@@ -587,7 +587,7 @@ class GDGT_Settings extends GDGT_Base {
 		echo '<input type="checkbox" name="' . $id . '" id="' . $id . '" value="1"';
 		if ( $existing_value === true )
 			echo ' checked';
-		echo ' /> <label for="' . $id . '">' . sprintf( esc_html( __( 'Include %s attributes in the Databox to express semantic meaning. (Recommended.)', static::PLUGIN_SLUG ) ), '<a href="http://schema.org/" target="_blank">Schema.org</a> <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html" target="_blank">HTML5 microdata</a>' ) . '</label>';
+		echo ' /> <label for="' . $id . '">' . sprintf( esc_html( __( 'Include %s attributes in the Databox to express semantic meaning. (Recommended.)', GDGT_Settings::PLUGIN_SLUG ) ), '<a href="http://schema.org/" target="_blank">Schema.org</a> <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html" target="_blank">HTML5 microdata</a>' ) . '</label>';
 	}
 
 	/**
@@ -600,13 +600,13 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function sanitize_schema_org( $true_false ) {
 		$option_name = 'gdgt_schema_org';
-		$true_false = static::sanitize_bool_preference( $true_false );
+		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
 		$existing_value = get_option( $option_name, '1' );
 		if ( $true_false != $existing_value ) {
 			if ( $true_false )
-				$message = sprintf( __( 'The %s will now include Schema.org microdata for improved semantic meaning.', static::PLUGIN_SLUG ), static::PLUGIN_NAME );
+				$message = sprintf( __( 'The %s will now include Schema.org microdata for improved semantic meaning.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME );
 			else
-				$message = sprintf( __( 'The %s will not include Schema.org microdata.', static::PLUGIN_SLUG ), static::PLUGIN_NAME );
+				$message = sprintf( __( 'The %s will not include Schema.org microdata.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME );
 			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
 		}
 		return $true_false;
@@ -637,14 +637,14 @@ class GDGT_Settings extends GDGT_Base {
 	public function sanitize_expand_products( $true_false ) {
 		$option_name = 'gdgt_expand_products';
 		/*if ( isset( $this->force_expand ) && is_bool( $this->force_expand ) )
-			return static::sanitize_bool_preference( $this->force_expand ); */
-		$true_false = static::sanitize_bool_preference( $true_false );
+			return GDGT_Settings::sanitize_bool_preference( $this->force_expand ); */
+		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
 		$existing_value = get_option( $option_name, '0' );
 		if ( $true_false != $existing_value ) {
 			if ( $true_false )
-				$message = __( 'All products in the databox will now appear expanded on initial page load.', static::PLUGIN_SLUG );
+				$message = __( 'All products in the databox will now appear expanded on initial page load.', GDGT_Settings::PLUGIN_SLUG );
 			else
-				$message = __( 'The first product in the databox will appear expanded on the initial page load.', static::PLUGIN_SLUG );
+				$message = __( 'The first product in the databox will appear expanded on the initial page load.', GDGT_Settings::PLUGIN_SLUG );
 			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
 		}
 		return $true_false;
@@ -730,13 +730,13 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function sanitize_answers_tab( $true_false ) {
 		$option_name = 'gdgt_answers_tab';
-		$true_false = static::sanitize_bool_preference( $true_false );
+		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
 		$existing_value = get_option( $option_name, '1' );
 		if ( $true_false != $existing_value ) {
 			if ( $true_false )
-				$message = __( 'The answers tab will now appear in the databox.', static::PLUGIN_SLUG );
+				$message = __( 'The answers tab will now appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
 			else
-				$message = __( 'The answers tab will no longer appear in the databox.', static::PLUGIN_SLUG );
+				$message = __( 'The answers tab will no longer appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
 			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
 		}
 		return $true_false;
@@ -762,13 +762,13 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function sanitize_discussions_tab( $true_false ) {
 		$option_name = 'gdgt_discussions_tab';
-		$true_false = static::sanitize_bool_preference( $true_false );
+		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
 		$existing_value = get_option( $option_name, '1' );
 		if ( $true_false != $existing_value ) {
 			if ( $true_false )
-				$message = __( 'The discussions tab will now appear in the databox.', static::PLUGIN_SLUG );
+				$message = __( 'The discussions tab will now appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
 			else
-				$message = __( 'The discussions tab will no longer appear in the databox.', static::PLUGIN_SLUG );
+				$message = __( 'The discussions tab will no longer appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
 			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
 		}
 		return $true_false;
@@ -794,13 +794,13 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function sanitize_new_tabs( $true_false ) {
 		$option_name = 'gdgt_new_tabs';
-		$true_false = static::sanitize_bool_preference( $true_false );
+		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
 		$existing_value = get_option( $option_name, '1' );
 		if ( $true_false != $existing_value ) {
 			if ( $true_false )
-				$message = sprintf( __( 'Future versions of the %s will automatically include new tab options.', static::PLUGIN_SLUG ), static::PLUGIN_NAME );
+				$message = sprintf( __( 'Future versions of the %s will automatically include new tab options.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME );
 			else
-				$message = sprintf( __( 'Auto-update of available tabs disabled. You will need to manually enable new tabs as they become available in future versions of the %s plugin.', static::PLUGIN_SLUG ), static::PLUGIN_NAME );
+				$message = sprintf( __( 'Auto-update of available tabs disabled. You will need to manually enable new tabs as they become available in future versions of the %s plugin.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME );
 			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
 		}
 		return $true_false;

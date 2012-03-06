@@ -34,7 +34,7 @@ class GDGT_Databox_Specs {
 				// respect the site's date formatting preferences
 				if ( ! isset( $this->date_format ) )
 					$this->date_format = get_option( 'date_format', 'F j, Y' );
-				$value = static::string_to_datetime( $spec_data->value->value );
+				$value = GDGT_Databox_Specs::string_to_datetime( $spec_data->value->value );
 				if ( $value instanceOf DateTime )
 					$this->specs[ $spec ] = $value;
 				unset( $value );

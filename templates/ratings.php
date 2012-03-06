@@ -87,7 +87,7 @@ class GDGT_Databox_Ratings {
 				} else {
 					$html .= '>';
 				}
-				$html .= '<span class="gdgt-reviews-avg-rating big ' . static::rating_color( $this->average_rating ) . '"';
+				$html .= '<span class="gdgt-reviews-avg-rating big ' . GDGT_Databox_Ratings::rating_color( $this->average_rating ) . '"';
 				if ( $schema_org )
 					$html .= ' itemprop="ratingValue"';
 				$html .= '>' . number_format_i18n( $this->average_rating, 1 ) . '</span> <span';
@@ -98,7 +98,7 @@ class GDGT_Databox_Ratings {
 
 			$html .= '<ul class="gdgt-reviews-criteria">';
 			foreach ( $this->ratings as $criteria => $rating ) {
-				$html .= '<li><span class="gdgt-criteria-label">' . esc_html( $criteria ) . '</span><span class="gdgt-reviews-avg-rating small ' . static::rating_color( $rating ) . '">';
+				$html .= '<li><span class="gdgt-criteria-label">' . esc_html( $criteria ) . '</span><span class="gdgt-reviews-avg-rating small ' . GDGT_Databox_Ratings::rating_color( $rating ) . '">';
 				if ( $rating < 1 )
 					$html .= '&#8212;';
 				else

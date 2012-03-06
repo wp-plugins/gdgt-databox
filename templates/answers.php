@@ -73,7 +73,7 @@ class GDGT_Databox_Answers extends GDGT_Databox_Discussions {
 	 * @return string HTML markup
 	 */
 	public function render( $displayed = false, $anchor_target = '' ) {
-		$html = '<div class="gdgt-content ' . static::content_class . '" role="tabpanel" ';
+		$html = '<div class="gdgt-content ' . GDGT_Databox_Answers::content_class . '" role="tabpanel" ';
 		if ( $displayed === true )
 			$html .= 'aria-hidden="false"';
 		else
@@ -86,7 +86,7 @@ class GDGT_Databox_Answers extends GDGT_Databox_Discussions {
 			}
 			$html .= '</ol>';
 		} else {
-			$html .= static::render_no_content();
+			$html .= GDGT_Databox_Answers::render_no_content();
 		}
 		$html .= $this->render_content_right( $anchor_target );
 		$html .= '</div>';

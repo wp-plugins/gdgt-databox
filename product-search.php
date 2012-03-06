@@ -25,9 +25,9 @@ class GDGT_Product_Search extends GDGT_Base {
 		if ( empty( $request_body ) )
 			return;
 
-		$args = static::base_request_args();
+		$args = GDGT_Product_Search::base_request_args();
 		$args['body'] = json_encode( $request_body );
-		$response = wp_remote_post( static::BASE_URL . 'v3/search/product/', $args );
+		$response = wp_remote_post( GDGT_Product_Search::BASE_URL . 'v3/search/product/', $args );
 		unset( $args );
 		if ( is_wp_error( $response ) )
 			return new WP_Error( 500, 'gdgt has issues.' );
@@ -83,7 +83,7 @@ class GDGT_Product_Search extends GDGT_Base {
 					}
 					unset( $instance_names );
 					if ( $autocomplete )
-						$p['autocomplete_name'] .= __( ' (all models)', static::PLUGIN_SLUG );
+						$p['autocomplete_name'] .= __( ' (all models)', GDGT_Product_Search::PLUGIN_SLUG );
 				}
 
 				$retval[] = $p;
@@ -122,7 +122,7 @@ class GDGT_Product_Search extends GDGT_Base {
 			if ( empty( $api_key ) )
 				return new WP_Error( 401, 'No API key set.' );
 		}
-		return static::search( array( 'api_key' => $api_key, 'keyword' => $search_query ), (bool) $autocomplete );
+		return GDGT_Product_Search::search( array( 'api_key' => $api_key, 'keyword' => $search_query ), (bool) $autocomplete );
 	}
 
 	/**
@@ -142,7 +142,7 @@ class GDGT_Product_Search extends GDGT_Base {
 				return new WP_Error( 401, 'No API key set.' );
 		}
 
-		return static::search( array( 'api_key' => $api_key, 'tags' => $tags ), (bool) $autocomplete );
+		return GDGT_Product_Search::search( array( 'api_key' => $api_key, 'tags' => $tags ), (bool) $autocomplete );
 	}
 }
 ?>

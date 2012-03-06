@@ -78,7 +78,7 @@ class GDGT_Base {
 			'httpversion' => '1.1',
 			'redirection' => 0,
 			'timeout' => 3,
-			'user-agent' => apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . site_url('/')  ) . '; ' . static::PLUGIN_SLUG . '/' . static::PLUGIN_VERSION,
+			'user-agent' => apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . site_url('/')  ) . '; ' . GDGT_Base::PLUGIN_SLUG . '/' . GDGT_Base::PLUGIN_VERSION,
 			'headers' => $headers
 		);
 		unset( $headers );

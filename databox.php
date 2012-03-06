@@ -44,7 +44,7 @@ class GDGT_Databox {
 		if ( get_post_meta( $post_id, 'gdgt-disabled', '1' ) == '1' )
 			return;
 
-		if ( static::stop_tag_exists() )
+		if ( GDGT_Databox::stop_tag_exists() )
 			return;
 
 		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
@@ -193,7 +193,7 @@ class GDGT_Databox {
 			require_once dirname(__FILE__) . '/templates/product.php';
 
 		$databox = '<div class="gdgt-wrapper';
-		if ( static::databox_type() === 'mini' )
+		if ( GDGT_Databox::databox_type() === 'mini' )
 			$databox .= ' mini';
 		$databox .= '" lang="en" dir="ltr" role="complementary tablist" aria-multiselectable="true">';
 		$expanded = true;
@@ -266,7 +266,7 @@ class GDGT_Databox {
 		$cache_key_parts[] = 'p' . $post_id;
 
 		// separate cache for full vs. mini box
-		if ( static::databox_type() === 'mini' )
+		if ( GDGT_Databox::databox_type() === 'mini' )
 			$cache_key_parts[] = 'm';
 
 		$cache_key_parts[] = 'n' . absint( get_option( 'gdgt_max_products', 10 ) );
@@ -322,27 +322,27 @@ class GDGT_Databox {
 		if ( $post_id === 0 )
 			return '';
 
-		$tags = static::tag_names_only( get_the_tags() );
+		$tags = GDGT_Databox::tag_names_only( get_the_tags() );
 
-		$products_include = static::stored_products_slugs_only( maybe_unserialize( get_post_meta( $post_id, 'gdgt-products-include', true ) ) );
+		$products_include = GDGT_Databox::stored_products_slugs_only( maybe_unserialize( get_post_meta( $post_id, 'gdgt-products-include', true ) ) );
 
 		// we need either explicit products to include in the response or tags that could match products
 		if ( empty( $tags ) && empty( $products_include ) )
 			return '';
 
-		$products_exclude = static::stored_products_slugs_only( maybe_unserialize( get_post_meta( $post_id, 'gdgt-products-exclude', true ) ) );
+		$products_exclude = GDGT_Databox::stored_products_slugs_only( maybe_unserialize( get_post_meta( $post_id, 'gdgt-products-exclude', true ) ) );
 		if ( empty( $products_exclude ) )
 			$products_exclude = array();
 
 		if ( empty( $cache_key ) || ! is_string( $cache_key ) )
-			$cache_key = static::cache_key( $post_id );
+			$cache_key = GDGT_Databox::cache_key( $post_id );
 
-		$products = static::gdgt_response( $tags, $products_include, $products_exclude, $extra_params );
+		$products = GDGT_Databox::gdgt_response( $tags, $products_include, $products_exclude, $extra_params );
 		if ( is_wp_error( $products ) ) {
 			if ( $fallback === true ) {
 				// try to fetch last known good result from transient cache if one exists
 				// gdgt API fail fallback
-				$databox = get_transient( static::cache_key_last_known_good( $cache_key ) );
+				$databox = get_transient( GDGT_Databox::cache_key_last_known_good( $cache_key ) );
 				if ( empty( $databox ) )
 					return '';
 				else
@@ -375,13 +375,13 @@ class GDGT_Databox {
 			}
 		} else {
 			// generate HTML from the returned products
-			$databox = static::render( $products );
+			$databox = GDGT_Databox::render( $products );
 		}
 
 		if ( ! empty( $databox ) ) {
 			set_transient( $cache_key, $databox, $expiration );
 			if ( $databox !== ' ' )
-				set_transient( static::cache_key_last_known_good( $cache_key ), $databox, 86400 ); // store last known good for 24 hours to account for gdgt API fail
+				set_transient( GDGT_Databox::cache_key_last_known_good( $cache_key ), $databox, 86400 ); // store last known good for 24 hours to account for gdgt API fail
 		}
 
 		return $databox;
@@ -404,10 +404,10 @@ class GDGT_Databox {
 		if ( $post_id === 0 )
 			return $content;
 
-		$cache_key = static::cache_key( $post_id );
+		$cache_key = GDGT_Databox::cache_key( $post_id );
 		$databox = get_transient( $cache_key );
 		if ( empty( $databox ) )
-			$databox = static::generate_databox( array(), true, $cache_key );
+			$databox = GDGT_Databox::generate_databox( array(), true, $cache_key );
 		unset( $cache_key );
 
 		$databox = trim( $databox );
