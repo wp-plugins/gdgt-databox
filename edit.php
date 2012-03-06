@@ -379,7 +379,7 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 		if ( ! empty( $pubdate ) )
 			$post_data['post_pub_date'] = $pubdate;
 
-		if ( function_exists( 'has_post_thumbnail' ) && function_exists( 'wp_get_attachment_image_src' ) && has_post_thumbnail() ) {
+		if ( function_exists( 'has_post_thumbnail' ) && function_exists( 'wp_get_attachment_image_src' ) && function_exists( 'get_post_thumbnail_id' ) && has_post_thumbnail() ) {
 			$image_url = esc_url_raw( wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'full' ), array( 'http', 'https' ) );
 			if ( ! empty( $image_url ) )
 				$post_data['post_image'] = $image_url;
