@@ -51,20 +51,50 @@ class GDGT_Databox_Specs {
 	/**
 	 * Convert a date expressed as YYYY-MM-DD into a DateTime object for later formatting
 	 *
-	 * @todo support no DateTime in PHP 5.2
 	 * @since 1.0
-	 * @param string $date_str date string in the format YYYY-MM-DD
+	 * @uses DateTime::__construct()
+	 * @uses gmmktime()
+	 * @param string $date_str date string in the format YYYY-MM-DD, YYYY-MM, or YYYY
 	 * @return DateTime object representation of the passed-in date at UTC
 	 */
 	public static function string_to_datetime( $date_str ) {
-		$length = strlen( $date_str );
-		if ( $length === 4 )
-			$date_str .= '-01-01';
-		else if ( $length === 7 )
-			$date_str .= '-01';
-		else if ( $length !== 10 )
-			return '';
-		return date_create_from_format( 'Y-m-d\TG:i:s', $date_str . 'T00:00:00', new DateTimeZone( 'UTC' ) );
+		$date_pieces = explode( '-', $date_str );
+		$formatted_date = array();
+		if ( isset( $date_pieces[0] ) ) {
+			$year = absint( $date_pieces[0] );
+			if ( $year > 1900 )
+				$formatted_date['year'] = $year;
+			else
+				return false;
+			unset( $year );
+		}
+		if ( isset( $date_pieces[1] ) ) {
+			$month = absint( $date_pieces[1] );
+			if ( $month > 0 && $month < 13 )
+				$formatted_date['month'] = $month;
+			else
+				$formatted_date['month'] = 1;
+			unset( $month );
+		} else {
+			$formatted_date['month'] = 1;
+		}
+		if ( isset( $date_pieces[2] ) ) {
+			$day = absint( $date_pieces[2] );
+			if ( $day > 0 && $day < 32 )
+				$formatted_date['day'] = $day;
+			else
+				$formatted_date['day'] = 1;
+			unset( $day );
+		} else {
+			$formatted_date['day'] = 1;
+		}
+		unset( $date_pieces );
+
+		try {
+			return new DateTime( '@' . gmmktime( 0, 0, 0, $formatted_date['month'], $formatted_date['day'], $formatted_date['year'] ) );
+		} catch( Exception $e ) {
+			return false;
+		}
 	}
 
 	/**

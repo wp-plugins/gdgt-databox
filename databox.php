@@ -368,8 +368,8 @@ class GDGT_Databox {
 
 			// if post less than 24 hours old there is a chance a product will soon be added and match. shorten cache
 			if ( isset( $post->post_date_gmt ) ) {
-				$published = DateTime::createFromFormat( 'Y-m-d H:i:s', $post->post_date_gmt, new DateTimeZone( 'GMT' ) );
-				if ( $published instanceOf DateTime && ( ( time() - absint( $published->format( 'U' ) ) ) < 86400 ) )
+				$published = absint( mysql2date( 'G', $post->post_date_gmt ) );
+				if ( $published > 0 && ( time() - $published ) < 86400 )
 					$expiration = 900; // 15 minutes
 				unset( $published );
 			}
