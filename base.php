@@ -12,21 +12,13 @@ if ( ! function_exists('get_bloginfo') )
 class GDGT_Base {
 
 	/**
-	 * gdgt API response version handled by this plugin.
-	 *
-	 * @since 1.0
-	 * @var string
-	 */
-	const API_VERSION = '1.0';
-
-	/**
 	 * Plugin version number.
 	 * Added to HTTP requests to identify the plugin to gdgt API servers
 	 *
 	 * @since 1.0
 	 * @var string
 	 */
-	const PLUGIN_VERSION = '1.0';
+	const PLUGIN_VERSION = '1.01';
 
 	/**
 	 * Plugin slug used to differentiate this plugin and its message bundles, options, etc. from other WordPress plugins

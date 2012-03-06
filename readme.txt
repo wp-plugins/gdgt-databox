@@ -2,7 +2,7 @@
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.0
+Stable tag: 1.01
 License: GPLv2 or later
 Tags: gdgt, gadgets, consumer electronics, reviews
 
@@ -27,8 +27,6 @@ Customizations include:
 * Choose to exclude up-to-date product support questions and discussions from gdgt.com
 * Fully expand all products on initial pageload
 * Include rich semantic markup describing the content of your post to improve the relevancy of your webpages to search engines and social sharing sites.
-
-The gdgt Databox plugin requires PHP version 5.3 (released in June 2009) or later.
 
 == Installation ==
 
@@ -77,6 +75,17 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.01 =
+
+* PHP 5.2.4+ compatibility
+* Increase priority of gdgt Databox compared to other content filters.
+
 = 1.0 =
 
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post.
+
+== Upgrade Notice ==
+
+= 1.01 =
+
+PHP 5.2 compatibility. Higher priority for gdgt Databox when used with other content plugins.
