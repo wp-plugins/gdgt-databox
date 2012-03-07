@@ -111,13 +111,13 @@ class GDGT_Databox_Ratings {
 		}
 		$html .= '</div><div class="gdgt-content-right"><p>' . esc_html( __( 'Get better reviews from people who actually have this product!', 'gdgt-databox' ) ) . '</p>';
 		if ( isset( $this->write_url ) ) {
-			$html .= '<a rel="nofollow" class="gdgt-button gdgt-write-review" data-ga="Write review button" href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"';
+			$html .= '<a rel="nofollow" class="gdgt-button gdgt-write-review" href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"';
 			if ( isset( $this->product_name ) )
 				$html .= ' title="' . esc_attr( sprintf( __( 'Review the %s', 'gdgt-databox' ), $this->product_name ) ) . '"';
 			$html .= $anchor_target . '>' . esc_html( __( 'write a review', 'gdgt-databox' ) ) . '</a>';
 		}
 		if ( $ratings_exist && isset( $this->url ) )
-			$html .= '<a class="gdgt-link-right gdgt-all-reviews" data-ga="See all reviews" href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '"' . $anchor_target . '>' . __( 'see all reviews', 'gdgt-databox' ) .  ' &#8594;</a>';
+			$html .= '<a class="gdgt-link-right gdgt-all-reviews" href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '"' . $anchor_target . '>' . __( 'see all reviews', 'gdgt-databox' ) .  ' &#8594;</a>';
 		$html .= '</div></div>';
 		return $html;
 	}

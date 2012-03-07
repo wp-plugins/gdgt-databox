@@ -121,14 +121,14 @@ class GDGT_Databox_Discussions {
 		$html = '<div class="gdgt-content-right"><p>' . esc_html( __( 'Talk about this product with other people who own it!', 'gdgt-databox' ) ) . '</p>';
 		
 		if ( isset( $this->write_url ) ) {
-			$html .= '<a rel="nofollow" class="gdgt-button gdgt-start-discussion" data-ga="Start discussion button" href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"' . $anchor_target;
+			$html .= '<a rel="nofollow" class="gdgt-button gdgt-start-discussion" href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"' . $anchor_target;
 			if ( isset( $this->product_name ) )
 				$html .= ' title="' . esc_attr( sprintf( __( 'Start a discussion about the %s', 'gdgt-databox' ), $this->product_name ) ) . '"';
 			$html .= '>'. esc_html( __( 'start a discussion', 'gdgt-databox' ) ) . '</a>';
 		}
 
 		if ( isset( $this->url ) && isset( $this->discussions ) && ! empty( $this->discussions ) ) {
-			$html .= '<a class="gdgt-link-right gdgt-all-discussions" data-ga="See all discussions"' . $anchor_target;
+			$html .= '<a class="gdgt-link-right gdgt-all-discussions"' . $anchor_target;
 			if ( isset( $this->product_name ) )
 				$html .= ' title="' . esc_attr( sprintf( _x( '%s discussions', 'product discussions', 'gdgt-databox' ), $this->product_name ) ) . '"';
 			$html .= '>' . esc_html( __( 'see all discussions', 'gdgt-databox' ) ) . ' &#8594;</a>';

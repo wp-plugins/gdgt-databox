@@ -125,7 +125,7 @@ class GDGT_Databox_Specs {
 			}
 			$html .= '</ul>';
 			if ( isset( $this->url ) ) {
-				$html .= '<a class="gdgt-link-right gdgt-all-specs" href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" data-ga="See all specs"' . $anchor_target;
+				$html .= '<a class="gdgt-link-right gdgt-all-specs" href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '"' . $anchor_target;
 				if ( isset( $this->product_name ) )
 					$html .= ' title="' . esc_attr( sprintf( __( '%s specifications', 'gdgt-databox' ), $this->product_name ) ) . '"';
 				$html .= '>' . _x( 'see all <abbr>specs</abbr>', 'product specifications', 'gdgt-databox' ) . ' &#8594;</a>';

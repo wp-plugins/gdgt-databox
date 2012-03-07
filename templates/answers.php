@@ -47,14 +47,14 @@ class GDGT_Databox_Answers extends GDGT_Databox_Discussions {
 		$html = '<div class="gdgt-content-right"><p>' . esc_html( __( 'Get better answers and support from people who actually have this product!', 'gdgt-databox' ) ) . '</p>';
 
 		if ( isset( $this->write_url ) ) {
-			$html .= '<a rel="nofollow" class="gdgt-button gdgt-ask-question" data-ga="Ask question button" href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"' . $anchor_target;
+			$html .= '<a rel="nofollow" class="gdgt-button gdgt-ask-question" href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"' . $anchor_target;
 			if ( isset( $this->product_name ) )
 				$html .= ' title="' . esc_attr( sprintf( __( 'Ask a question about the %s', 'gdgt-databox' ), $this->product_name ) ) . '"';
 			$html .= '>' . esc_html( __( 'ask a question', 'gdgt-databox' ) ) . '</a>';
 		}
 
 		if ( isset( $this->url ) && isset( $this->discussions ) && ! empty( $this->discussions ) ) {
-			$html .= '<a class="gdgt-link-right gdgt-all-answers" data-ga="See all answers" href="' . esc_url( $this->url, array( 'http', 'https' ) ) .  '"' . $anchor_target;
+			$html .= '<a class="gdgt-link-right gdgt-all-answers" href="' . esc_url( $this->url, array( 'http', 'https' ) ) .  '"' . $anchor_target;
 			if ( isset( $this->product_name ) )
 				$html .= ' title="' . esc_attr( sprintf( __( '%s answers', 'gdgt-databox' ), $this->product_name ) ) . '"';
 			$html .= '>' . esc_html( __( 'see all answers', 'gdgt-databox' ) ) . ' &#8594;</a>';
