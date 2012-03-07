@@ -6,7 +6,7 @@
 @width: @container_width - ( 15 * 2 ) - ( 1 * 2 );
 
 // gdgt databox container
-.gdgt-wrapper {
+#gdgt-wrapper {
 
   display: block;
   width: @container_width;
@@ -51,6 +51,10 @@
   }
 
   ol, ul {
+    list-style: none;
+  }
+
+  li {
     list-style: none;
   }
 
@@ -176,6 +180,10 @@
           text-decoration: underline;
         }
       }
+    }
+
+    strong {
+      color: #00BDF6 !important;
     }
 
     // instances
@@ -449,6 +457,7 @@
       margin-right: 0;
       font-size: 12px;
       line-height: 16px;
+      text-align: left !important;
     }
 
     .gdgt-button {

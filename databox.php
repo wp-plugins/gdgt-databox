@@ -100,11 +100,11 @@ class GDGT_Databox {
 	 * @todo only include if post generates a databox
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.0' );
+		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.03' );
 		$js_filename = 'gdgt-databox.js';
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true )
 			$js_filename = 'gdgt-databox.dev.js';
-		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.0' );
+		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.03' );
 	}
 
 	/**
@@ -192,10 +192,10 @@ class GDGT_Databox {
 		if ( ! class_exists( 'GDGT_Databox_Product' ) )
 			require_once dirname(__FILE__) . '/templates/product.php';
 
-		$databox = '<div class="gdgt-wrapper';
+		$databox = '<div id="gdgt-wrapper"';
 		if ( GDGT_Databox::databox_type() === 'mini' )
-			$databox .= ' mini';
-		$databox .= '" lang="en" dir="ltr" role="complementary tablist" aria-multiselectable="true">';
+			$databox .= ' class="mini"';
+		$databox .= ' lang="en" dir="ltr" role="complementary tablist" aria-multiselectable="true">';
 		$expanded = true;
 		foreach( $products as $product ) {
 			$product_template = new GDGT_Databox_Product( $product );

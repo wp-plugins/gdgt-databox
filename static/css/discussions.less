@@ -1,5 +1,5 @@
 // discussions and answers have similar HTML, layout, styles
-.gdgt-wrapper .gdgt-content-discussions .gdgt-content-left, .gdgt-wrapper .gdgt-content-answers .gdgt-content-left {
+#gdgt-wrapper .gdgt-content-discussions .gdgt-content-left, #gdgt-wrapper .gdgt-content-answers .gdgt-content-left {
   padding-top: 3px;
   padding-right: 15px;
   padding-bottom: 3px;
@@ -7,14 +7,14 @@
   min-height: 129px;
 }
 
-.gdgt-wrapper.mini {
+#gdgt-wrapper.mini {
 
   .gdgt-content-discussions .gdgt-content-left, .gdgt-content-answers .gdgt-content-left {
     min-height: 128px;
   }
 }
 
-.gdgt-wrapper {
+#gdgt-wrapper {
   .gdgt-content-discussions {
     .gdgt-button {
       font-size: 12px;
@@ -26,13 +26,14 @@
   }
 
   .gdgt-thread-row {
-    list-style: none;
+    list-style: none !important;
     height: 25px;
-    margin-top: 4px;
-    margin-bottom: 20px;
-    margin-left: 0;
-    margin-right: 0;
+    margin-top: 4px !important;
+    margin-bottom: 20px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     font-size: 12px;
+    text-align: left !important;
 
     &:last-child {
       margin: 0;
@@ -68,14 +69,14 @@
   }
 }
 
-.gdgt-wrapper.mini {
+#gdgt-wrapper.mini {
   
   .gdgt-thread-title {
     width: 65% !important;
   }
 }
 
-.gdgt-wrapper {
+#gdgt-wrapper {
   .gdgt-thread-replies {
     display: block;
     float: right;

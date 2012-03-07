@@ -89,7 +89,7 @@ gdgt.databox = {
 
 	// I love the way you turn me on
 	enable: function() {
-		var databoxes = jQuery( ".gdgt-wrapper" );
+		var databoxes = jQuery( "#gdgt-wrapper" );
 		if ( databoxes.length === 0 ) {
 			// nothing to work with
 			return;
@@ -158,7 +158,7 @@ gdgt.databox = {
 			}
 
 			// store the position of the first databox on the page
-			var databox = jQuery( ".gdgt-wrapper" ).first();
+			var databox = jQuery( "#gdgt-wrapper" );
 			if ( databox.length > 0 ) {
 				databox_offset = databox.offset();
 				if ( databox_offset.top > 0 ) {
@@ -291,7 +291,7 @@ gdgt.databox = {
 		// measure the width of the container to track display environments
 		set_content_width: function() {
 			if ( gdgt.databox.analytics.content_width === undefined ) {
-				var width = jQuery( ".gdgt-wrapper" ).first().parent().width();
+				var width = jQuery( "#gdgt-wrapper" ).parent().width();
 				if ( typeof width === "number" ) {
 					gdgt.databox.analytics.content_width = width;
 				}
