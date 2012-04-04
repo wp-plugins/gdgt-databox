@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/gdgt-databox\n"
-"POT-Creation-Date: 2012-03-05 23:02:08+00:00\n"
+"POT-Creation-Date: 2012-04-04 04:30:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -48,6 +48,40 @@ msgstr ""
 msgid "No results found."
 msgstr ""
 
+#: filter-info.php:93
+msgid "View source code in WordPress plugin repository (this sometimes works)"
+msgstr ""
+
+#: filter-info.php:109
+msgid "Unknown"
+msgstr ""
+
+#: filter-info.php:118
+msgid ""
+"We found other active plugins that may change your existing post content in-"
+"place or add content to the end of your post alongside the %s."
+msgstr ""
+
+#: filter-info.php:118
+msgid "A non-exhaustive list for reference:"
+msgstr ""
+
+#: filter-info.php:171
+msgid "default"
+msgstr ""
+
+#: filter-info.php:177 filter-info.php:187
+msgid "Priority"
+msgstr ""
+
+#: filter-info.php:177 filter-info.php:187
+msgid "Plugin"
+msgstr ""
+
+#: filter-info.php:177 filter-info.php:187
+msgid "Function"
+msgstr ""
+
 #: product-search.php:86
 msgid " (all models)"
 msgstr ""
@@ -77,206 +111,300 @@ msgid "Databox display settings"
 msgstr ""
 
 #: settings.php:82
-msgid "Maximum products per Databox"
+msgid "Content width"
 msgstr ""
 
-#: settings.php:88
+#: settings.php:84
+msgid "Web feeds"
+msgstr ""
+
+#: settings.php:85
+msgid "Maximum products"
+msgstr ""
+
+#: settings.php:91
 msgid "Auto-expand"
 msgstr ""
 
-#: settings.php:92
+#: settings.php:95
 msgid "Schema.org microdata"
 msgstr ""
 
-#: settings.php:95
+#: settings.php:97
+msgid "Content filter priority"
+msgstr ""
+
+#: settings.php:100
 msgid "Access and restrictions"
 msgstr ""
 
-#: settings.php:97
+#: settings.php:102
 msgid "Disable capability"
 msgstr ""
 
-#: settings.php:99
+#: settings.php:104
 msgid "Stop-tags"
 msgstr ""
 
-#: settings.php:112
+#: settings.php:117
 msgid "Key specs"
 msgstr ""
 
-#: settings.php:113
+#: settings.php:118
 msgid "Reviews"
 msgstr ""
 
-#: settings.php:114
+#: settings.php:119
 msgid "Answers"
 msgstr ""
 
-#: settings.php:115
+#: settings.php:120
 msgid "Discussions"
 msgstr ""
 
-#: settings.php:128
+#: settings.php:133
 msgid "Manage options (Administrator)"
 msgstr ""
 
-#: settings.php:129
+#: settings.php:134
 msgid "Publish post (Author)"
 msgstr ""
 
-#: settings.php:130
+#: settings.php:135
 msgid "Edit post (Contributor)"
 msgstr ""
 
-#: settings.php:154
+#: settings.php:159
 msgid "gdgt API key needed"
 msgstr ""
 
-#: settings.php:155
+#: settings.php:160
 msgid "Please <a href=\"%s\">enter a valid API key</a> to begin using the %s."
 msgstr ""
 
-#: settings.php:170
+#: settings.php:175
 msgid "Settings"
 msgstr ""
 
-#: settings.php:202
+#: settings.php:207
 msgid "%s Settings"
 msgstr ""
 
-#: settings.php:206
+#: settings.php:211
 msgid "Save Changes"
 msgstr ""
 
-#: settings.php:215
+#: settings.php:220
 msgid "Your secret %s API key is required to enable Databox access."
 msgstr ""
 
-#: settings.php:216
+#: settings.php:221
 msgid "Visit our API help page"
 msgstr ""
 
-#: settings.php:216
+#: settings.php:221
 msgid "to learn more about gdgt API keys or to request a new key."
 msgstr ""
 
-#: settings.php:225
+#: settings.php:230
 msgid "Configure how the Databox can be manually or automatically disabled."
 msgstr ""
 
-#: settings.php:235
+#: settings.php:240
 msgid "Customize Databox appearance and behavior."
 msgstr ""
 
-#: settings.php:245
+#: settings.php:250
 msgid "Customize the tabs shown for each product module."
 msgstr ""
 
-#: settings.php:305
+#: settings.php:310
 msgid "API key updated!"
 msgstr ""
 
-#: settings.php:308
+#: settings.php:313
 msgid ""
 "Invalid API key entered. Please check your documentation and/or contact %s."
 msgstr ""
 
-#: settings.php:333
+#: settings.php:338
 msgid "The minimum capability needed to disable the %s on a single post."
 msgstr ""
 
-#: settings.php:334
+#: settings.php:339
 msgid "Further details on WordPress roles and capabilities"
 msgstr ""
 
-#: settings.php:354
+#: settings.php:359
 msgid "Permissions changed: only users with %s capability may disable the %s."
 msgstr ""
 
-#: settings.php:372
+#: settings.php:377
 msgid ""
 "Posts containing any of the specified stop-tags will not display the %s."
 msgstr ""
 
-#: settings.php:373
+#: settings.php:378
 msgid "Enter one or more tags separated by a comma (,)."
 msgstr ""
 
-#: settings.php:374
+#: settings.php:379
 msgid "Add"
 msgstr ""
 
-#: settings.php:412
+#: settings.php:417
 msgid "%s now enabled for any post tagged \"%s.\""
 msgstr ""
 
-#: settings.php:419
+#: settings.php:424
 msgid "%s now disabled for any post tagged \"%s.\""
 msgstr ""
 
-#: settings.php:486
+#: settings.php:478
+msgid "or parent"
+msgstr ""
+
+#: settings.php:491
+msgid "Not defined by theme"
+msgstr ""
+
+#: settings.php:493
+msgid "pixels"
+msgstr ""
+
+#: settings.php:493
+msgid "defined by theme"
+msgstr ""
+
+#: settings.php:504
+msgid "Databox not displayed. Minimum width of %d pixels required."
+msgstr ""
+
+#: settings.php:511
+msgid "Displaying %1$s Databox: %2$d horizontal pixels."
+msgstr ""
+
+#: settings.php:513
+msgctxt "more information"
+msgid "more info"
+msgstr ""
+
+#: settings.php:527
+msgid "Include %s after RSS or Atom feed full content"
+msgstr ""
+
+#: settings.php:542
+msgid "The %s will appear in feeds after full post content."
+msgstr ""
+
+#: settings.php:545
+msgid "The %s will no longer appear in feeds."
+msgstr ""
+
+#: settings.php:566
+msgid "Maximum number of products per Databox"
+msgstr ""
+
+#: settings.php:586
 msgid "The %s will display a maximum of %d %s."
 msgstr ""
 
-#: settings.php:486
+#: settings.php:586
 msgid "product"
 msgstr ""
 
-#: settings.php:486
+#: settings.php:586
 msgid "products"
 msgstr ""
 
-#: settings.php:556
+#: settings.php:656
 msgid "Expand all products on initial page load"
 msgstr ""
 
-#: settings.php:590
+#: settings.php:690
 msgid ""
 "Include %s attributes in the Databox to express semantic meaning. "
 "(Recommended.)"
 msgstr ""
 
-#: settings.php:607
+#: settings.php:707
 msgid ""
 "The %s will now include Schema.org microdata for improved semantic meaning."
 msgstr ""
 
-#: settings.php:609
+#: settings.php:709
 msgid "The %s will not include Schema.org microdata."
 msgstr ""
 
-#: settings.php:645
+#: settings.php:730
+msgid ""
+"Other plugins may also add content alongside the %s at the end of your posts."
+msgstr ""
+
+#: settings.php:730
+msgid ""
+"Enter a priority value between %1$d and %2$d to reorder where the %3$s "
+"appears."
+msgstr ""
+
+#: settings.php:731
+msgctxt "take notice"
+msgid "Note:"
+msgstr ""
+
+#: settings.php:731
+msgid ""
+"the lower the number, the earlier its execution, meaning it will appear "
+"higher up the page. A priority of %1$d will show the %3$s above another "
+"plugin acting on the same content filter with a priority of %2$d."
+msgstr ""
+
+#: settings.php:757
+msgctxt "positive numeric change: 1 to 2"
+msgid "increased"
+msgstr ""
+
+#: settings.php:759
+msgctxt "negative numeric change: 2 to 1"
+msgid "decreased"
+msgstr ""
+
+#: settings.php:760
+msgid "Content filter priority %1$s from %2$u to %3$u."
+msgstr ""
+
+#: settings.php:796
 msgid ""
 "All products in the databox will now appear expanded on initial page load."
 msgstr ""
 
-#: settings.php:647
+#: settings.php:798
 msgid ""
 "The first product in the databox will appear expanded on the initial page "
 "load."
 msgstr ""
 
-#: settings.php:737
+#: settings.php:888
 msgid "The answers tab will now appear in the databox."
 msgstr ""
 
-#: settings.php:739
+#: settings.php:890
 msgid "The answers tab will no longer appear in the databox."
 msgstr ""
 
-#: settings.php:769
+#: settings.php:920
 msgid "The discussions tab will now appear in the databox."
 msgstr ""
 
-#: settings.php:771
+#: settings.php:922
 msgid "The discussions tab will no longer appear in the databox."
 msgstr ""
 
-#: settings.php:801
+#: settings.php:952
 msgid "Future versions of the %s will automatically include new tab options."
 msgstr ""
 
-#: settings.php:803
+#: settings.php:954
 msgid ""
 "Auto-update of available tabs disabled. You will need to manually enable new "
 "tabs as they become available in future versions of the %s plugin."
@@ -292,32 +420,33 @@ msgid_plural "%d answers"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/answers.php:36
+#: templates/answers.php:36 templates/answers.php:46
 msgid "No one has asked a question about this product yet."
 msgstr ""
 
-#: templates/answers.php:36 templates/discussions.php:110
+#: templates/answers.php:36 templates/answers.php:46
+#: templates/discussions.php:134 templates/discussions.php:144
 msgid "Why not be the first?"
 msgstr ""
 
-#: templates/answers.php:47
+#: templates/answers.php:57 templates/answers.php:84
 msgid ""
 "Get better answers and support from people who actually have this product!"
 msgstr ""
 
-#: templates/answers.php:52
+#: templates/answers.php:62 templates/answers.php:89
 msgid "Ask a question about the %s"
 msgstr ""
 
-#: templates/answers.php:53
+#: templates/answers.php:63 templates/answers.php:90
 msgid "ask a question"
 msgstr ""
 
-#: templates/answers.php:59
+#: templates/answers.php:69 templates/answers.php:96
 msgid "%s answers"
 msgstr ""
 
-#: templates/answers.php:60
+#: templates/answers.php:70 templates/answers.php:97
 msgid "see all answers"
 msgstr ""
 
@@ -331,101 +460,111 @@ msgid_plural "%d replies"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/discussions.php:96
+#: templates/discussions.php:96 templates/discussions.php:120
 msgid "gdgt user %s"
 msgstr ""
 
-#: templates/discussions.php:110
+#: templates/discussions.php:134 templates/discussions.php:144
 msgid "No one has started a discussion about this product yet."
 msgstr ""
 
-#: templates/discussions.php:121
+#: templates/discussions.php:155 templates/discussions.php:182
 msgid "Talk about this product with other people who own it!"
 msgstr ""
 
-#: templates/discussions.php:126
+#: templates/discussions.php:160 templates/discussions.php:187
+#: templates/discussions.php:194
 msgid "Start a discussion about the %s"
 msgstr ""
 
-#: templates/discussions.php:127
+#: templates/discussions.php:161 templates/discussions.php:188
 msgid "start a discussion"
 msgstr ""
 
-#: templates/discussions.php:133
+#: templates/discussions.php:167
 msgctxt "product discussions"
 msgid "%s discussions"
 msgstr ""
 
-#: templates/discussions.php:134
+#: templates/discussions.php:168 templates/discussions.php:195
 msgid "see all discussions"
 msgstr ""
 
-#: templates/product.php:232
+#: templates/product.php:251 templates/product.php:330
 msgid "%s thumbnail image"
 msgstr ""
 
-#: templates/product.php:257
+#: templates/product.php:276
 msgctxt "site credits"
 msgid "powered by"
 msgstr ""
 
-#: templates/product.php:262
+#: templates/product.php:281
 msgid "key <abbr title=\"specifications\">specs</abbr>"
 msgstr ""
 
-#: templates/product.php:263
+#: templates/product.php:282 templates/product.php:370
 msgid "user reviews"
 msgstr ""
 
-#: templates/product.php:264
+#: templates/product.php:283 templates/product.php:371
 msgid "answers"
 msgstr ""
 
-#: templates/product.php:265
+#: templates/product.php:284 templates/product.php:372
 msgid "discussions"
 msgstr ""
 
-#: templates/ratings.php:96
+#: templates/product.php:354
+msgid "powered by"
+msgstr ""
+
+#: templates/product.php:369
+msgid ""
+"key <abbr title=\"specifications\" style=\"border-bottom:0\">specs</abbr>"
+msgstr ""
+
+#: templates/ratings.php:115 templates/ratings.php:166
 msgid "average user rating"
 msgstr ""
 
-#: templates/ratings.php:110
+#: templates/ratings.php:129 templates/ratings.php:187
 msgid "There are not any user reviews for this product yet."
 msgstr ""
 
-#: templates/ratings.php:110
+#: templates/ratings.php:129 templates/ratings.php:187
 msgid "Why not be the first to write one?"
 msgstr ""
 
-#: templates/ratings.php:112
+#: templates/ratings.php:131 templates/ratings.php:189
 msgid "Get better reviews from people who actually have this product!"
 msgstr ""
 
-#: templates/ratings.php:116
+#: templates/ratings.php:135 templates/ratings.php:193
 msgid "Review the %s"
 msgstr ""
 
-#: templates/ratings.php:117
+#: templates/ratings.php:136 templates/ratings.php:194
 msgid "write a review"
 msgstr ""
 
-#: templates/ratings.php:120
+#: templates/ratings.php:139 templates/ratings.php:197
 msgid "see all reviews"
 msgstr ""
 
-#: templates/specs.php:85
+#: templates/specs.php:115 templates/specs.php:148
 msgid "There aren't any specs for this product yet."
 msgstr ""
 
-#: templates/specs.php:85
+#: templates/specs.php:115 templates/specs.php:148
 msgid "Check back soon!"
 msgstr ""
 
-#: templates/specs.php:100
+#: templates/specs.php:130 templates/specs.php:168
 msgid "%s specifications"
 msgstr ""
 
-#: templates/specs.php:101
+#: templates/specs.php:131 templates/specs.php:169
 msgctxt "product specifications"
 msgid "see all <abbr>specs</abbr>"
 msgstr ""
