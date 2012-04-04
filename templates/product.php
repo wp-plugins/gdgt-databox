@@ -13,12 +13,12 @@ class GDGT_Databox_Product {
 	 *
 	 * @since 1.0
 	 * @param stdClass $product Product component of the gdgt API JSON response
+	 * @param bool $collapsed_only process only properties needed for a collapsed product view
 	 */
-	public function __construct( $product ) {
-		if ( isset( $product->title ) )
-			$this->full_name = $product->title;
+	public function __construct( $product, $collapsed_only = false ) {
 		if ( isset( $product->title_url ) )
 			$this->url = $product->title_url;
+
 		if ( isset( $product->product_name ) )
 			$this->name = $product->product_name;
 		if ( isset( $product->company_name ) ) {
@@ -29,6 +29,16 @@ class GDGT_Databox_Product {
 			$this->company = $company;
 			unset( $company );
 		}
+
+		if ( $collapsed_only === true ) {
+			$this->collapsed = true;
+			return;
+		} else {
+			$this->collapsed = false;
+		}
+
+		if ( isset( $product->title ) )
+			$this->full_name = $product->title;
 
 		// we only use the 50x50 image
 		if ( isset( $product->product_images ) ) {
@@ -70,6 +80,7 @@ class GDGT_Databox_Product {
 					$product->tabs->user_reviews->url = $product->tabs->user_reviews->review_landing_url;
 					unset( $product->tabs->user_reviews->review_landing_url );
 				}
+
 				if ( isset( $product->tabs->user_reviews->write_review_url ) ) {
 					$product->tabs->user_reviews->write_url = $product->tabs->user_reviews->write_review_url;
 					unset( $product->tabs->user_reviews->write_review_url );
@@ -86,6 +97,7 @@ class GDGT_Databox_Product {
 					$product->tabs->answers->url = $product->tabs->answers->all_answers_url;
 					unset( $product->tabs->answers->all_answers_url );
 				}
+
 				if ( isset( $product->tabs->answers->ask_a_question_url ) ) {
 					$product->tabs->answers->write_url = $product->tabs->answers->ask_a_question_url;
 					unset( $product->tabs->answers->ask_a_question_url );
@@ -109,6 +121,13 @@ class GDGT_Databox_Product {
 
 				$this->tabs['discussions'] = $product->tabs->discussions;
 			}
+
+			/**
+			 * Make it easy to test by selected tab
+			 *
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true && array_key_exists( 'tab', $_GET ) && in_array( $_GET['tab'], array( 'key_specs','user_reviews', 'answers', 'discussions' ), true ) )
+				$this->selected_tab = $_GET['tab']; */
+
 			if ( ! isset( $this->selected_tab ) && ! empty( $this->tabs ) )
 				$this->selected_tab = key( $this->tabs[0] );
 		}
@@ -246,7 +265,7 @@ class GDGT_Databox_Product {
 			$html .= '<meta itemprop="name" content="' . esc_attr( $this->full_name ) .  '">';
 		if ( isset( $this->instances ) ) {
 			$html .= '<ul class="instances">';
-			foreach( $this->instances as $instance ) {
+			foreach ( $this->instances as $instance ) {
 				$html .= '<li><a href="' . esc_url( $instance->url, array( 'http', 'https' ) ) . '" class="gdgt-product-instance';
 				if ( isset( $instance->selected ) && $instance->selected )
 					$html .= ' selected';
@@ -258,7 +277,7 @@ class GDGT_Databox_Product {
 
 		if ( isset( $this->tabs ) && ! empty( $this->tabs ) ) {
 			$html .= '<ul class="gdgt-tabs ' . $this->tab_class_names[ count($this->tabs) - 2 ] . '" role="tablist">';
-			foreach( array(
+			foreach ( array(
 				'key_specs' => array( 'class' => 'specs', 'text' => __( 'key <abbr title="specifications">specs</abbr>', 'gdgt-databox' ) ),
 				'user_reviews' => array( 'class' => 'reviews', 'text' => __( 'user reviews', 'gdgt-databox' ) ),
 				'answers' => array( 'class' => 'answers', 'text' => __( 'answers', 'gdgt-databox' ) ),
@@ -285,9 +304,115 @@ class GDGT_Databox_Product {
 		}
 
 		$html .= '</div>'; // gdgt-product-wrapper
+		if ( $is_expanded === true && isset( $this->name ) ) {
+			if ( ! class_exists( 'GDGT_Databox' ) )
+				require_once( dirname( dirname( __FILE__ ) ) . '/databox.php' );
+			$html .= GDGT_Databox::google_analytics_beacon( $this->name, $this->url, 'noscript' );
+		}
 		$html .= '</div>'; // gdgt-product
 		return $html;
 	}
+
+	/**
+	 * Render a no JavaScript, inline CSS databox suitable for use in a stand-alone environment such as a syndicated feed and feed reeder
+	 *
+	 * @since 1.1
+	 * @return string HTML markup of an inline, standalone Databox product
+	 */
+	public function render_inline() {
+		if ( $this->collapsed === true ) {
+			return '<li style="height:39px; padding-top:0; padding-bottom: 0; padding-left:15px; padding-right:15px; margin:0; border-top-width:1px; border-bottom-width:1px; border-right-width:0; border-left-width:0; border-style:solid; border-color: #CCC; border-top-width:0; background-color:#ededed"><a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" style="padding:0; margin:0; font-size:18px; color:#333; line-height:40px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:inherit; text-decoration:none; border-bottom-width:0">' . esc_html( $this->company->name ) . ' <strong style="font-weight:bold">' . esc_html( $this->name ) . '</strong></a></li>';
+		}
+
+		$html = '<li style="display:block; margin:0; padding:15px; border-color:#CCC; border-style:solid; border-top-width:1px; border-bottom-width:1px; border-right-width:0; border-left-width:0; min-height: 243px"><div>';
+
+		// product header
+		$html .= '<a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" title="' . esc_attr( $this->full_name ). '" style="text-decoration:none; border-bottom-width:0; margin-right:15px; float:left"><img alt="' . esc_attr( sprintf( __( '%s thumbnail image', 'gdgt-databox' ), $this->full_name ) ) . '" src="' . esc_url( $this->image->src, array( 'http', 'https' ) ) . '" width="50" height="50" style="border:0" /></a>';
+		$html .= '<div style="float:left; margin:0; padding:0">';
+		$html .= '<h2 style="display:block; float:left; padding:0; margin-top:3px; margin-bottom:';
+		if ( isset( $this->instances ) )
+			$html .= '3';
+		else
+			$html .= '10';
+		$html .= 'px; margin-left:0; margin-right:0; max-width:420px; font-size:24px; font-weight:normal; line-height:26px"><a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" style="color:#00BDF6; text-decoration:none; border-bottom-width:0">' . esc_html( $this->company->name ) . ' <strong style="color:#00BDF6;font-weight:bold">' . esc_html( $this->name ) .  '</strong></a></h2>';
+		if ( isset( $this->instances ) ) {
+			$html .= '<p style="clear:both; min-width:1px; max-width:330px; padding:0; margin-bottom:12px; margin-top:0; margin-left:0; margin-right:0; font-size:12px; font-weight:normal; line-height:18px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">';
+			$instances = array();
+			foreach( $this->instances as $instance ) {
+				$instance_str = '<a href="' . esc_url( $instance->url, array( 'http', 'https' ) ) . '" style="text-decoration:none; border-bottom-width:0; color:#888';
+				if ( isset( $instance->selected ) && $instance->selected )
+					$instance_str .= ';font-weight:bold';
+				$instance_str .= '" title="' . esc_html( $this->full_name . ' ' . $instance->name ) . '">' . esc_html( $instance->name ) . '</a>';
+				$instances[] = $instance_str;
+				unset( $instance_str );
+			}
+			$html .= implode( ', ', $instances );
+			unset( $instances );
+			$html .= '</p>';
+		}
+		$html .= '</div>';
+		$html .= '<div style="position:relative; float:right"><p style="text-align:right; font-size:11px; color:#666; margin:0; padding:0; overflow:hidden"><a href="http://gdgt.com/" style="text-decoration:none; border-bottom-width:0; color:inherit">' . __( 'powered by', 'gdgt_databox' ) . ' <img alt="gdgt logo" src="' . esc_url( plugins_url( '/static/css/images/gdgt-logo.png', dirname( __FILE__ ) ), array( 'http', 'https' ) ) . '" width="49" height="23" style="margin-left:4px; border:0; vertical-align:middle" /></a></p></div>';
+
+		// tabs
+		if ( isset( $this->tabs ) && ! empty( $this->tabs ) ) {
+			$html .= '<ul style="clear:both; height:26px; list-style:none; padding:0; margin-top:15px; margin-bottom:0; margin-left:0; margin-right:0; border-bottom-width:2px; border-bottom-style:solid; border-bottom-color:#333">';
+			$num_tabs = count( $this->tabs );
+			$tab_width_percent = absint( 100 / $num_tabs );
+			$tab_widths = array_fill( 0, $num_tabs, $tab_width_percent );
+			// fill out odd number of tabs with remainder width
+			if ( ( $num_tabs % 2 ) === 1 )
+				$tab_widths[$num_tabs-1] = 100 - ( $tab_width_percent * ( $num_tabs - 1 ) );
+			unset( $tab_width_percent );
+			unset( $num_tabs );
+			$position = 0;
+			foreach( array(
+				'key_specs' => __( 'key <abbr title="specifications" style="border-bottom:0">specs</abbr>', 'gdgt-databox' ),
+				'user_reviews' => __( 'user reviews', 'gdgt-databox' ),
+				'answers' => __( 'answers', 'gdgt-databox' ),
+				'discussions' => __( 'discussions', 'gdgt-databox' )
+			) as $key => $label ) {
+				if ( ! array_key_exists( $key, $this->tabs ) )
+					continue;
+
+				$selected = false;
+				if ( $this->selected_tab === $key )
+					$selected = true;
+
+				$tab_data = $this->tabs[$key];
+				if ( empty( $tab_data ) )
+					continue;
+				$html .= '<li style="list-style:none; float:left; padding:0; margin:0; background-color:#F4F4F4; font-size:12px; color:#333; text-align:center; line-height: 26px; width:' . $tab_widths[$position] . '%';
+				if ( $selected )
+					$html .= ';background-color: #333; color:#FFF';
+				$html .= '">';
+				if ( isset( $tab_data->url ) )
+					$html .= '<a href="' . esc_url( $tab_data->url, array( 'http', 'https' ) ) . '" title="' . esc_attr( $this->full_name . ' ' . strip_tags( $label ) ) . '" style="text-decoration:none; border-bottom-width:0; color:inherit">' . $label;
+				if ( isset( $tab_data->total_count ) ) {
+					$html .= ' <span style="padding-top:1px; padding-bottom:1px; padding-left:4px; padding-right:4px; margin-left:3px; margin-right:0; margin-top:0; margin-bottom:0; font-size:11px; vertical-align:top;';
+					if ( $selected )
+						$html .= 'background-color:#F4F4F4; color:#333';
+					else
+						$html .= 'background-color:#333; color:#F4F4F4';
+					$html .= '">' . number_format_i18n( absint( $tab_data->total_count ), 0 ) . '</span>';
+				}
+				$html .= '</a></li>';
+				$position++;
+			}
+			unset( $position );
+			$html .= '</ul>';
+
+			// tab content
+			$html .= $this->render_tabs( true, false );
+		}
+
+		if ( ! class_exists( 'GDGT_Databox' ) )
+			require_once( dirname( dirname( __FILE__ ) ) . '/databox.php' );
+		$html .= GDGT_Databox::google_analytics_beacon( $this->name, $this->url, 'img' );
+		$html .= '</div>';
+		$html .= '</li>';
+		return $html;
+	}
+
 
 	/**
 	 * Generate tab HTML
@@ -298,21 +423,21 @@ class GDGT_Databox_Product {
 	 * @param string $anchor_target anchor element custom attributes
 	 * @return string HTML string for all tabs or blank
 	 */
-	private function render_tabs( $self_contained, $schema_org, $anchor_target ) {
+	private function render_tabs( $self_contained = false, $schema_org = true, $anchor_target = '' ) {
 		$tabs_html = '';
 
 		// selected tab appears first in markup
 		if ( $this->selected_tab === 'key_specs' ) {
-			$tabs_html = $this->render_specs_tab( $anchor_target );
+			$tabs_html = $this->render_specs_tab( $self_contained, $anchor_target );
 			unset( $this->tabs['key_specs'] );
 		} else if ( $this->selected_tab === 'user_reviews' ) {
-			$tabs_html = $this->render_reviews_tab( $schema_org, $anchor_target );
+			$tabs_html = $this->render_reviews_tab( $self_contained, $schema_org, $anchor_target );
 			unset( $this->tabs['user_reviews'] );
 		} else if ( $this->selected_tab === 'discussions' ) {
-			$tabs_html = $this->render_discussions_tab( $anchor_target );
+			$tabs_html = $this->render_discussions_tab( $self_contained, $anchor_target );
 			unset( $this->tabs['discussions'] );
 		} else if ( $this->selected_tab === 'answers' ) {
-			$tabs_html = $this->render_answers_tab( $anchor_target );
+			$tabs_html = $this->render_answers_tab( $self_contained, $anchor_target );
 			unset( $this->tabs['answers'] );
 		} else {
 			$tabs_html = '';
@@ -320,10 +445,10 @@ class GDGT_Databox_Product {
 
 		// only include additional tabs if reachable
 		if ( ! $self_contained ) {
-			$tabs_html .= $this->render_specs_tab( $anchor_target );
-			$tabs_html .= $this->render_reviews_tab( $schema_org, $anchor_target );
-			$tabs_html .= $this->render_discussions_tab( $anchor_target );
-			$tabs_html .= $this->render_answers_tab( $anchor_target );
+			$tabs_html .= $this->render_specs_tab( false, $anchor_target );
+			$tabs_html .= $this->render_reviews_tab( false, $schema_org, $anchor_target );
+			$tabs_html .= $this->render_discussions_tab( false, $anchor_target );
+			$tabs_html .= $this->render_answers_tab( false, $anchor_target );
 		}
 
 		return $tabs_html;
@@ -333,10 +458,11 @@ class GDGT_Databox_Product {
 	 * Generate HTML for the specs tab
 	 *
 	 * @since 1.0
+	 * @param bool $self_contained render inline CSS, no JS
 	 * @param string $anchor_target anchor element custom attributes
 	 * @return string HTML string for tab or blank
 	 */
-	private function render_specs_tab( $anchor_target = '' ) {
+	private function render_specs_tab( $self_contained = false, $anchor_target = '' ) {
 		if ( ! array_key_exists( 'key_specs', $this->tabs ) )
 			return '';
 
@@ -349,18 +475,22 @@ class GDGT_Databox_Product {
 			$specs = new GDGT_Databox_Specs( $this->tabs['key_specs']->specs, $this->full_name, $this->tabs['key_specs']->url );
 		else
 			$specs = new GDGT_Databox_Specs( $this->tabs['key_specs']->specs, $this->full_name );
-		return $specs->render( $selected, $anchor_target );
+		if ( $selected === true && $self_contained === true )
+			return $specs->render_inline();
+		else
+			return $specs->render( $selected, $anchor_target );
 	}
 
 	/**
 	 * Generate HTML for the reviews tab
 	 *
 	 * @since 1.0
+	 * @param bool $self_contained render inline CSS, no JS
 	 * @param bool $schema_org include schema.org markup
 	 * @param string $anchor_target anchor element custom attributes
 	 * @return string HTML string for tab or blank
 	 */
-	private function render_reviews_tab( $schema_org = true, $anchor_target = '' ) {
+	private function render_reviews_tab( $self_contained = false, $schema_org = true, $anchor_target = '' ) {
 		if ( ! array_key_exists( 'user_reviews', $this->tabs ) )
 			return '';
 
@@ -370,17 +500,21 @@ class GDGT_Databox_Product {
 		if ( ! class_exists( 'GDGT_Databox_Ratings' ) )
 			include_once( dirname(__FILE__) . '/ratings.php' );
 		$ratings = new GDGT_Databox_Ratings( $this->tabs['user_reviews'], $this->full_name );
-		return $ratings->render( $selected, $schema_org, $anchor_target );
+		if ( $selected === true && $self_contained === true )
+			return $ratings->render_inline();
+		else
+			return $ratings->render( $selected, $schema_org, $anchor_target );
 	}
 
 	/**
 	 * Generate HTML for the discussions tab
 	 *
 	 * @since 1.0
+	 * @param bool $self_contained render inline CSS, no JS
 	 * @param string $anchor_target anchor element custom attributes
 	 * @return string HTML string for tab or blank
 	 */
-	private function render_discussions_tab( $anchor_target = '' ) {
+	private function render_discussions_tab( $self_contained = false, $anchor_target = '' ) {
 		$key = 'discussions';
 		if ( ! array_key_exists( $key, $this->tabs ) )
 			return '';
@@ -391,17 +525,21 @@ class GDGT_Databox_Product {
 		if ( ! class_exists( 'GDGT_Databox_Discussions' ) )
 			include_once( dirname( __FILE__ ) . '/discussions.php' );
 		$discussions = new GDGT_Databox_Discussions( $this->tabs[$key], $this->full_name );
-		return $discussions->render( $selected, $anchor_target );
+		if ( $selected === true && $self_contained === true )
+			return $discussions->render_inline();
+		else
+			return $discussions->render( $selected, $anchor_target );
 	}
 
 	/**
 	 * Generate HTML for the answers tab
 	 *
 	 * @since 1.0
+	 * @param bool $self_contained render inline CSS, no JS
 	 * @param string $anchor_target anchor element custom attributes
 	 * @return string HTML string for tab or blank
 	 */
-	private function render_answers_tab( $anchor_target = '' ) {
+	private function render_answers_tab( $self_contained = false, $anchor_target = '' ) {
 		$key = 'answers';
 		if ( ! array_key_exists( $key, $this->tabs ) )
 			return '';
@@ -412,7 +550,10 @@ class GDGT_Databox_Product {
 		if ( ! class_exists( 'GDGT_Databox_Answers' ) )
 			include_once( dirname( __FILE__ ) . '/answers.php' );
 		$answers = new GDGT_Databox_Answers( $this->tabs[$key], $this->full_name );
-		return $answers->render( $selected, $anchor_target );
+		if ( $selected === true && $self_contained === true )
+			return $answers->render_inline();
+		else
+			return $answers->render( $selected, $anchor_target );
 	}
 }
 ?>
