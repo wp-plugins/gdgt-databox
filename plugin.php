@@ -6,7 +6,7 @@
 Plugin Name: gdgt Databox
 Plugin URI: http://gdgt.com/
 Description: Display gadget specifications, reviews, discussions, and answers alongside your content. Requires a gdgt API key.
-Version: 1.03
+Version: 1.1
 Author: gdgt
 Author URI: http://gdgt.com/
 License: GPL v2 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -36,7 +36,7 @@ if ( ! class_exists( 'GDGT_Databox_Plugin' ) ):
  * Configure and initialize actions and hooks for gdgt product box configuration and display
  *
  * @since 1.0
- * @version 1.03
+ * @version 1.1
  */
 class GDGT_Databox_Plugin {
 
