@@ -184,7 +184,6 @@ class GDGT_Filter_Info {
 				$html .= '</tbody></table>';
 				return $html;
 			}
-				return GDGT_Filter_Info::helper_text() . '<table id="' . esc_attr( str_replace( '_', '-', $filter ) ) . '-plugin-priorites"><thead><tr><th class="priority">' . esc_html( __( 'Priority' ) ) . '</th><th>' . esc_html( __( 'Plugin' ) ) . '</th><th>' . esc_html( __( 'Function' ) ) . '</th></tr></thead><tbody>' . implode( '', $rows ) . '</tbody></table>';
 			unset( $rows );
 		}
 
