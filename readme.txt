@@ -1,8 +1,8 @@
 === gdgt Databox ===
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2
-Tested up to: 3.3.1
-Stable tag: 1.03
+Tested up to: 3.4
+Stable tag: 1.11
 License: GPLv2 or later
 Tags: gdgt, gadgets, consumer electronics, reviews
 
@@ -27,6 +27,8 @@ Customizations include:
 * Choose to exclude up-to-date product support questions and discussions from gdgt.com
 * Fully expand all products on initial pageload
 * Include rich semantic markup describing the content of your post to improve the relevancy of your webpages to search engines and social sharing sites.
+* Customize display order alongside other plugins
+* Include Databox content in syndicated RSS and Atom feeds
 
 == Installation ==
 
@@ -53,6 +55,10 @@ The gdgt Databox requires at least 550 horizontal pixels in your theme's main co
 
 Databox content outputs alongside your site's posts, inheriting the styles of your theme and custom CSS. Refer to the gdgt Terms of Service related to your API agreement for additional branding requirements.
 
+= The Databox appears above / below another plugin. How do I change it? =
+
+Set a custom content filter priority from the `gdgt Databox` Settings page.
+
 = Does gdgt track my users in any way? =
 
 The gdgt Databox uses [Google Analytics](http://www.google.com/analytics/) to track aggregate Databox views and interactions, but does not add any kind of tracking to identify individual users.
@@ -75,6 +81,16 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.11 =
+
+* Remove content filter helper from Settings page when no plugins data found
+
+= 1.1 =
+
+* Include a stand-alone version of the Databox in web feeds (the_content_feed).
+* Add custom priority to setting page. Position gdgt Databox above or below other content plugins.
+* Display content_width in Settings page alongside its impact on gdgt Databox settings
+
 = 1.03 =
 
 * Additional CSS rules to maintain expected layout across a variety of themes
@@ -93,6 +109,14 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post.
 
 == Upgrade Notice ==
+
+= 1.11 =
+
+Remove content filter helper from Settings page when no plugins data found.
+
+= 1.1 =
+
+Databox appears in feed view. Set custom filter priority.
 
 = 1.03 =
 

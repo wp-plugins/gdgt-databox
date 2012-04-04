@@ -37,6 +37,16 @@ class GDGT_Databox_Answers extends GDGT_Databox_Discussions {
 	}
 
 	/**
+	 * No discussions exist
+	 *
+	 * @since 1.1
+	 * @return string HTML markup
+	 */
+	public static function render_no_content_inline() {
+		return '<div style="float:left; width:75%; padding-right:15px; padding-left:0; padding-top:40px; padding-bottom:3px; margin:0; border-right-color:#EEE; border-right-width:1px; border-right-style:solid; min-height:95px; line-height:20px; color:#333; text-align:center"><p><strong>' . esc_html( __( 'No one has asked a question about this product yet.', 'gdgt-databox' ) ) . '</strong><br />' . esc_html( __( 'Why not be the first?', 'gdgt-databox' ) ) . '</p></div>';
+	}
+
+	/**
 	 * Render right content area soliciting viewer action
 	 *
 	 * @since 1.0
@@ -58,6 +68,33 @@ class GDGT_Databox_Answers extends GDGT_Databox_Discussions {
 			if ( isset( $this->product_name ) )
 				$html .= ' title="' . esc_attr( sprintf( __( '%s answers', 'gdgt-databox' ), $this->product_name ) ) . '"';
 			$html .= '>' . esc_html( __( 'see all answers', 'gdgt-databox' ) ) . ' &#8594;</a>';
+		}
+
+		$html .= '</div>';
+		return $html;
+	}
+
+	/**
+	 * Render right content area soliciting viewer action with inline styles
+	 *
+	 * @since 1.1
+	 * @return string HTML markup for discussion tab sidebar
+	 */
+	private function render_content_right_inline() {
+		$html = '<div style="float:right; width:20%; padding:0; margin:0"><p style="padding:0; margin-top:3px; margin-bottom:12px; margin-left:0; margin-right:0; font-size:12px; line-height:16px; text-align:left">' . esc_html( __( 'Get better answers and support from people who actually have this product!', 'gdgt-databox' ) ) . '</p>';
+
+		if ( isset( $this->write_url ) ) {
+			$html .= '<a href="' . esc_url( $this->write_url, array( 'http', 'https' ) ) . '"';
+			if ( isset( $this->product_name ) )
+				$html .= ' title="' . esc_attr( sprintf( __( 'Ask a question about the %s', 'gdgt-databox' ), $this->product_name ) ) . '"';
+			$html .= ' style="display:inline-block; padding-top:5px; padding-bottom:5px; padding-left:12px; padding-right:12px; background-color:#d7d7d7; border-color:#999; border-style:solid; border-width:1px; font-size:12px; color:#333; text-align:center; text-decoration:none; width:81%; margin-top:0; margin-bottom:10px; margin-left:0; margin-right:0; white-space:nowrap">' . esc_html( __( 'ask a question', 'gdgt-databox' ) ) . '</a>';
+		}
+
+		if ( isset( $this->url ) && isset( $this->discussions ) && ! empty( $this->discussions ) ) {
+			$html .= '<a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '"';
+			if ( isset( $this->product_name ) )
+				$html .= ' title="' . esc_attr( sprintf( __( '%s answers', 'gdgt-databox' ), $this->product_name ) ) . '"';
+			$html .= ' style="clear:both; float:right; margin-top:3px; margin-bottom:0; margin-left:0; margin-right:0; font-size:11px; font-weight:bold; color:#00BDF6; cursor:pointer; white-space:nowrap; text-decoration:none; border-bottom-width:0">' . esc_html( __( 'see all answers', 'gdgt-databox' ) ) . ' &#8594;</a>';
 		}
 
 		$html .= '</div>';
@@ -89,6 +126,29 @@ class GDGT_Databox_Answers extends GDGT_Databox_Discussions {
 			$html .= GDGT_Databox_Answers::render_no_content();
 		}
 		$html .= $this->render_content_right( $anchor_target );
+		$html .= '</div>';
+		return $html;
+	}
+
+	/**
+	 * Build HTML for the discussions tab with inline CSS
+	 *
+	 * @since 1.1
+	 * @return string HTML
+	 */
+	public function render_inline() {
+		$html = '<div style="clear:both; min-height:135px; padding-top:8px; padding-bottom:8px; padding-left:15px; padding-right:15px; margin:0; background-color:#FFF; border-color:#CCC; border-top-width:0; border-bottom-width:1px; border-left-width:1px; border-right-width:1px; border-style:solid; color:#333; overflow:hidden">';
+		if ( isset( $this->discussions ) && ! empty( $this->discussions ) ) {
+			$html .= '<ol style="list-style:none; padding-top:3px; padding-right:15px; padding-bottom:3px; padding-left:0; min-height:129px; float:left; width:75%; min-height:135px; padding-right:15px; padding-left:0; padding-top:0; padding-bottom:0; margin:0; border-right-color: #EEE; border-right-width:1px; border-right-style:solid">';
+			foreach ( $this->discussions as $discussion ) {
+				$html .= $this->render_single_discussion_inline( $discussion );
+			}
+			$html .= '</ol>';
+		} else {
+			$html .= GDGT_Databox_Answers::render_no_content_inline();
+		}
+
+		$html .= $this->render_content_right_inline();
 		$html .= '</div>';
 		return $html;
 	}
