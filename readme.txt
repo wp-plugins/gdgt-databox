@@ -2,7 +2,7 @@
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2
 Tested up to: 3.4
-Stable tag: 1.1
+Stable tag: 1.11
 License: GPLv2 or later
 Tags: gdgt, gadgets, consumer electronics, reviews
 
@@ -81,6 +81,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.11 =
+
+* Remove content filter helper from Settings page when no plugins data found
+
 = 1.1 =
 
 * Include a stand-alone version of the Databox in web feeds (the_content_feed).
@@ -105,6 +109,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post.
 
 == Upgrade Notice ==
+
+= 1.11 =
+
+Remove content filter helper from Settings page when no plugins data found.
 
 = 1.1 =
 
