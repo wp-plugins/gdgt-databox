@@ -143,15 +143,15 @@ class GDGT_Databox_Specs {
 	 * @return string HTML markup for the specs tab with inline CSS
 	 */
 	public function render_inline() {
-		$html = '<div style="min-height:120px; padding:15px; margin:0; background-color:#FFF; border-color:#CCC; border-top-width:0; border-bottom-width:1px; border-left-width:1px; border-right-width:1px; border-style:solid; overflow:hidden">';
+		$html = '<div style="clear:both; min-height:120px; padding-top:10px; padding-bottom:0; padding-left:0; padding-right:0; overflow:hidden">';
 		if ( empty( $this->specs ) ) {
 			$html .= '<div style="min-height:95px; padding-top:40px; line-height:20px; color:#333; text-align:center"><p><strong style="font-weight:bold">' . esc_html( __( 'There aren\'t any specs for this product yet.', 'gdgt-databox' ) ) . '</strong><br />' . esc_html( __( 'Check back soon!', 'gdgt-databox' ) ) . '</p></div>';
 		} else {
 			$html .= '<ul style="list-style:none; min-height:105px; margin:0; padding:0">';
 			foreach ( $this->specs as $label => $value ) {
-				$html .= '<li style="overflow:hidden; float:left; width:25%; height:47px; padding-bottom:5px; padding-top:0; padding-left:0; padding-right:0; margin:0; line-height:0; font-weight:bold">';
-				$html .= '<span style="display:block; width:95%; padding:0; margin-bottom:6px; margin-top:0; margin-left:0; margin-right:0; font-size:11px; line-height:11px; color:#AAA; text-transform:uppercase; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' . esc_html( $label ) . '</span>';
-				$html .= '<span style="display:block; overflow:hidden; width:95%; max-height: 28px; line-height: 15px; color:#333">';
+				$html .= '<li style="float:left; width:25%; height:47px; padding-bottom:5px; padding-top:0; padding-left:0; padding-right:0; margin:0; line-height:0; font-weight:bold; line-height:0; overflow:hidden">';
+				$html .= '<span style="display:block; width:95%; padding:0; margin-bottom:6px; margin-top:0; margin-left:0; margin-right:0; font-size:11px; color:#AAA; line-height:11px; text-transform:uppercase; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">' . esc_html( $label ) . '</span>';
+				$html .= '<span style="display:block; width:95%; max-height: 28px; line-height: 15px; color:#333; overflow:hidden">';
 				if ( $value instanceOf DateTime )
 					$html .= $value->format( $this->date_format );
 				else
@@ -163,7 +163,7 @@ class GDGT_Databox_Specs {
 
 			// link to all specs
 			if ( isset( $this->url ) ) {
-				$html .= '<p><a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" style="clear:both; float:right; margin-top:3px; margin-bottom:0; margin-left:0; margin-right:0; font-size:13px; font-weight:bold; color:#00BDF6; white-space:nowrap; text-decoration:none; border-bottom-width:0"';
+				$html .= '<p><a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" style="clear:both; float:right; margin-top:3px; margin-bottom:0; margin-left:0; margin-right:0; font-size:13px; font-weight:bold; color:#3399CC; cursor:pointer; overflow:hidden; white-space:nowrap; text-decoration:none; border-bottom-width:0"';
 				if ( isset( $this->product_name ) )
 					$html .= ' title="' . esc_attr( sprintf( __( '%s specifications', 'gdgt-databox' ), $this->product_name ) ) . '"';
 				$html .= '>' . _x( 'see all <abbr>specs</abbr>', 'product specifications', 'gdgt-databox' ) . ' &#8594;</a></p>';
