@@ -2,7 +2,7 @@
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2
 Tested up to: 3.4
-Stable tag: 1.2
+Stable tag: 1.21
 License: GPLv2 or later
 Tags: gdgt, gadgets, consumer electronics, reviews
 
@@ -80,6 +80,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.21 =
+
+* Improve caching for dynamic theme switchers
+
 = 1.2 =
 
 * Fresh new design
@@ -118,6 +122,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post
 
 == Upgrade Notice ==
+
+= 1.21 =
+
+Improve caching for dynamic theme switchers
 
 = 1.2 =
 
