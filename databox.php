@@ -6,6 +6,9 @@
  * @since 1.0
  */
 class GDGT_Databox {
+	const placeholder = '<div id="gdgt-placeholder"></div>';
+	public static $placeholder_count = 1;
+	const google_analytics_id = 'UA-818999-9';
 
 	/**
 	 * Attach to WP load action
@@ -20,7 +23,7 @@ class GDGT_Databox {
 	 * Wait for WordPress to load so we can use query functions
 	 *
      * Test for minimum requirements for a databox to appear in the post
-	 * Current view is a single post
+	 * Current view is a single post web or feed view
 	 * An admin user has not disabled the databox for this post
 	 * No stop tags exist in the post's tags
 	 *
@@ -29,12 +32,15 @@ class GDGT_Databox {
 	public function on_wp_load() {
 		global $post, $content_width;
 
+		if ( ! isset( $post ) )
+			return;
+
 		// databox on single posts only
-		if ( ! is_single() || ! isset( $post ) )
+		if ( ! ( is_feed() || is_single() ) )
 			return;
 
 		// do not display on mobile themes or known overflow cases
-		if ( isset( $content_width ) && $content_width < 550 )
+		if ( ! is_feed() && ( isset( $content_width ) && $content_width < 550 ) )
 			return;
 
 		$post_id = absint( $post->ID );
@@ -47,10 +53,24 @@ class GDGT_Databox {
 		if ( GDGT_Databox::stop_tag_exists() )
 			return;
 
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
-
-		// possibly output content at the end of the post
-		add_filter( 'the_content', array( &$this, 'after_content' ), 1, 1 );
+		$this->content_priority = absint( get_option( 'gdgt_content_filter_priority', 1 ) );
+		if ( is_feed() ) {
+			if ( (bool) get_option( 'gdgt_feed_include', true ) ) {
+				if ( $this->content_priority < 10 ) { // if before wpautop
+					add_filter( 'the_content_feed', array( &$this, 'add_placeholder' ), $this->content_priority );
+					$this->content_priority = 12; // after shortcode
+				}
+				add_filter( 'the_content_feed', array( &$this, 'after_content' ), $this->content_priority );
+			}
+		} else {
+			add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+			// possibly output content at the end of the post
+			if ( $this->content_priority < 10 ) {
+				add_filter( 'the_content', array( &$this, 'add_placeholder' ), $this->content_priority );
+				$this->content_priority = 12; // after shortcode
+			}
+			add_filter( 'the_content', array( &$this, 'after_content' ), $this->content_priority, 1 );
+		}
 
 		// shortcode could happen
 		remove_shortcode( 'gdgt' );
@@ -88,7 +108,7 @@ class GDGT_Databox {
 	 */
 	public static function databox_type() {
 		global $content_width;
-		if ( isset( $content_width ) && $content_width < 650 )
+		if ( ! is_feed() && ( isset( $content_width ) && $content_width < 650 ) )
 			return 'mini';
 		return '';
 	}
@@ -100,11 +120,15 @@ class GDGT_Databox {
 	 * @todo only include if post generates a databox
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.03' );
+		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.2' );
 		$js_filename = 'gdgt-databox.js';
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true )
 			$js_filename = 'gdgt-databox.dev.js';
-		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.03' );
+		$jquery = 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
+		if ( is_ssl() )
+			$jquery = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
+		wp_enqueue_script( 'jquery', $jquery, array(), null );
+		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.2' );
 	}
 
 	/**
@@ -152,9 +176,11 @@ class GDGT_Databox {
 		if ( ! class_exists( 'GDGT_Base' ) )
 			require_once( dirname( __FILE__ ) . '/base.php' );	
 		$args = GDGT_Base::base_request_args();
+		if ( defined( 'DOING_CRON' ) && DOING_CRON )
+			$args['timeout'] = 30;
 		$args['body'] = json_encode( $params );
 		unset( $params );
-		$response = wp_remote_post( GDGT_Base::BASE_URL . 'v2/product/module', $args );
+		$response = wp_remote_post( GDGT_Base::BASE_URL . 'v3/product/module', $args );
 		unset( $args );
 		if ( is_wp_error( $response ) || absint( wp_remote_retrieve_response_code( $response ) ) !== 200 )
 			return new WP_Error( 'gdgt-fail', 'gdgt API failed' );
@@ -178,13 +204,6 @@ class GDGT_Databox {
 		if ( empty( $products ) || ! is_array( $products ) )
 			return '';
 
-		// should have been enforced by limit parameter in API.
-		// do it ourselves if doesn't match stored preference
-		$max_products = absint( get_option( 'gdgt_max_products', 10 ) );
-		if ( count( $products ) > $max_products )
-			$products = array_slice( $products, 0, $max_products );
-		unset( $max_products );
-
 		$expand_all = false;
 		if ( get_option( 'gdgt_expand_products', false ) == '1' )
 			$expand_all = true;
@@ -192,20 +211,44 @@ class GDGT_Databox {
 		if ( ! class_exists( 'GDGT_Databox_Product' ) )
 			require_once dirname(__FILE__) . '/templates/product.php';
 
-		$databox = '<div id="gdgt-wrapper"';
-		if ( GDGT_Databox::databox_type() === 'mini' )
-			$databox .= ' class="mini"';
-		$databox .= ' lang="en" dir="ltr" role="complementary tablist" aria-multiselectable="true">';
-		$expanded = true;
-		foreach( $products as $product ) {
-			$product_template = new GDGT_Databox_Product( $product );
-			if ( ! isset( $product_template->url ) )
-				continue;
-			$databox .= $product_template->render( $expanded );
-			if ( ! $expand_all && $expanded )
-				$expanded = false;
+		if ( is_feed() ) {
+			$databox = '<div lang="en" dir="ltr" style="display:block; width:650px; padding:0; margin-top:20px; margin-bottom:20px; margin-left:0; margin-right:0; background-color:#FFF; border-color:#CCC; border-style:solid; border-top-width:1px; border-bottom-width:0; border-left-width:1px; border-right-width:1px; font-family:Arial, Helvetica, sans-serif; font-size:13px; font-weight:normal; text-align:left; line-height:1em; vertical-align:baseline"><ol style="list-style:none; margin:0; padding:0">';
+			$expanded = true;
+			foreach ( $products as $product ) {
+				$product_template = new GDGT_Databox_Product( $product, ! $expanded );
+				if ( ! isset( $product_template->url ) )
+					continue;
+				$databox .= $product_template->render_inline();
+				if ( ! $expand_all && $expanded )
+					$expanded = false;
+			}
+			$databox .= '</ol></div>';
+		} else {
+			$databox = '<div id="gdgt-wrapper"';
+			if ( GDGT_Databox::databox_type() === 'mini' )
+				$databox .= ' class="mini"';
+			if ( isset( $content_width ) ) { // match the specified width preference, not parent computed
+				$databox_width = absint( $content_width );
+				if ( $databox_width > 1000 )
+					$databox_width = 1000;
+				$databox .= ' style="width:' . $databox_width . 'px"';
+				unset( $databox_width );
+			}
+			$databox .= ' lang="en" dir="ltr" role="complementary tablist" aria-multiselectable="true">';
+			$expanded = true;
+			$position = 1;
+			foreach ( $products as $product ) {
+				$product_template = new GDGT_Databox_Product( $product );
+				if ( ! isset( $product_template->url ) )
+					continue;
+				$databox .= $product_template->render( $expanded, $position );
+				if ( ! $expand_all && $expanded )
+					$expanded = false;
+				$position++;
+			}
+			$databox .= GDGT_Databox::google_analytics_beacon( 'gdgt Databox', 'http://gdgt.com/databox/', 'noscript' );
+			$databox .= '</div>';
 		}
-		$databox .= '</div>';
 		return $databox;
 	}
 
@@ -255,6 +298,8 @@ class GDGT_Databox {
 	 * @return string cache key
 	 */
 	public static function cache_key( $post_id ) {
+		global $content_width;
+
 		$cache_key_parts = array( 'gdgt-databox', 'v1' );
 		if ( is_multisite() ) {
 			$blog_id = absint( get_current_blog_id() );
@@ -265,26 +310,26 @@ class GDGT_Databox {
 
 		$cache_key_parts[] = 'p' . $post_id;
 
-		// separate cache for full vs. mini box
-		if ( GDGT_Databox::databox_type() === 'mini' )
-			$cache_key_parts[] = 'm';
+		// separate cache by content width. busts cache when switching themes
+		$width = 650;
+		if ( isset( $content_width ) ) {
+			if ( $content_width > 1000 )
+				$width = 1000;
+			else
+				$width = $content_width;
+		}
+		$cache_key_parts[] = 'w' . $width;
+		unset( $width );
 
 		$cache_key_parts[] = 'n' . absint( get_option( 'gdgt_max_products', 10 ) );
-
-		// store tab preference uniqueness
-		$tabs = array( 's','r' );
-		if ( (bool) get_option( 'gdgt_answers_tab', true ) )
-			$tabs[] = 'a';
-		if ( (bool) get_option( 'gdgt_discussions_tab', true ) )
-			$tabs[] = 'd';
-		$cache_key_parts[] = implode( '', $tabs );
-		unset( $tabs );
 
 		// display all products in fully expanded state
 		if ( (bool) get_option( 'gdgt_expand_products', false ) )
 			$cache_key_parts[] = 'e';
 		if ( ! (bool) get_option( 'gdgt_schema_org', true ) )
 			$cache_key_parts[] = 'ns';
+		if ( is_feed() )
+			$cache_key_parts[] = 'f';
 
 		// must be 45 characters or fewer http://core.trac.wordpress.org/ticket/15058
 		return implode( '-', $cache_key_parts );
@@ -299,6 +344,36 @@ class GDGT_Databox {
 	 */
 	public static function cache_key_last_known_good( $cache_key ) {
 		return $cache_key . '-lkg';
+	}
+
+	/**
+	 * Google Analytics image beacon for noscript environments
+	 *
+	 * @param string $title page title
+	 * @param string $url gdgt URL
+	 * @param string $element noscript or img
+	 * @return string HTML markup for a GA image beacon
+	 */
+	public static function google_analytics_beacon( $title, $url, $element = '' ) {
+		if ( ! class_exists( 'GDGT_Google_Analytics' ) )
+			include_once( dirname( __FILE__ ) . '/google-analytics.php' );
+
+		$ga = new GDGT_Google_Analytics( GDGT_Databox::google_analytics_id );
+		$ga->setHostname( 'gdgt.com' );
+		$ga->setPageTitle( $title );
+		$ga->setPageURL( $url );
+		$ga->setReferrer( get_permalink() );
+		$ga_url = $ga->get_image_url();
+		if ( empty( $ga_url ) ) {
+			return '';
+		} else if ( in_array( $element, array( 'img','noscript' ), true ) ) {
+			$img = '<img alt=" " src="' . esc_url( $ga_url, array( 'http', 'https' ) ) . '" width="1" height="1" />';
+			if ( $element === 'img' )
+				return $img;
+			else
+				return '<noscript>' . $img . '</noscript>';
+		}
+		return $ga_url;
 	}
 
 	/**
@@ -388,21 +463,47 @@ class GDGT_Databox {
 	}
 
 	/**
+	 * Add a wpautop-safe grouping block placeholder in the_content HTML to protect against modification
+	 * We will later replace this string with the actual Databox HTML
+	 *
+	 * @since 1.2
+	 * @param string $content the post content
+	 * @return string post content with a placeholder appended
+	 */
+	public function add_placeholder( $content ) {
+		$this->has_placeholder = true;
+		return $content . GDGT_Databox::placeholder;
+	}
+
+	/**
+	 * Remove the placholder if set
+	 *
+	 * @since 1.2
+	 * @param string $content the post content
+	 * @return string post content with placeholder removed
+	 */
+	public function remove_placeholder( $content ) {
+		if ( isset( $this->has_placeholder ) && $this->has_placeholder === true )
+			return str_replace( GDGT_Databox::placeholder, '', $content, GDGT_Databox::$placeholder_count );
+		return $content;
+	}
+
+	/**
 	 * Possibly display a gdgt Databox after the post content
 	 *
-	 * @since 1.0
+	 * @since 1.2
 	 * @param string $content the post content
 	 * @return string post content with possible databox appended
 	 */
-	public function after_content( $content ) {
+	private function databox_content() {
 		global $post;
 
 		if ( ! isset( $post ) )
-			return $content;
+			return '';
 
 		$post_id = absint( $post->ID );
 		if ( $post_id === 0 )
-			return $content;
+			return '';
 
 		$cache_key = GDGT_Databox::cache_key( $post_id );
 		$databox = get_transient( $cache_key );
@@ -410,13 +511,25 @@ class GDGT_Databox {
 			$databox = GDGT_Databox::generate_databox( array(), true, $cache_key );
 		unset( $cache_key );
 
-		$databox = trim( $databox );
+		return trim( $databox );
+	}
 
-		if ( ! empty( $databox ) )
-			return $content . $databox;
+	/**
+	 * Add Databox content in place or replacing a previous placeholder
+	 *
+	 * @since 1.0
+	 * @param string $content the post content
+	 * @return string post content with possible databox appended and placeholder removed
+	 */
+	public function after_content( $content ) {
+		$databox = $this->databox_content();
+		if ( empty( $databox ) )
+			$databox = '';
 
-		// don't break the filter
-		return $content;
+		if ( ! empty( $content ) && isset( $this->has_placeholder ) && $this->has_placeholder === true )
+			return str_replace( GDGT_Databox::placeholder, $databox, $content, GDGT_Databox::$placeholder_count );
+
+		return $content . $databox;
 	}
 
 	/**
@@ -436,8 +549,15 @@ class GDGT_Databox {
 
 		// treat an empty shortcode as explicit placement of the databox inside the post instead of appended to the end
 		if ( empty( $tags ) && empty( $products_include ) && empty( $products_exclude ) ) {
+			$shortcode_priority = 11;
 			// prevent double output
-			remove_filter( 'the_content', array( &$this, 'after_content' ), 20, 1 );
+			if ( is_feed() ) {
+				add_filter( 'the_content_feed', array( &$this, 'remove_placeholder' ), $shortcode_priority + 1 );
+				remove_filter( 'the_content_feed', array( &$this, 'after_content' ), $this->content_priority, 1 );
+			} else {
+				add_filter( 'the_content', array( &$this, 'remove_placeholder' ), $shortcode_priority + 1 );
+				remove_filter( 'the_content', array( &$this, 'after_content' ), $this->content_priority, 1 );
+			}
 			return $this->after_content( '' );
 		}
 

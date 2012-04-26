@@ -1,7 +1,7 @@
 var gdgt = gdgt || {};
 gdgt.product_selector = {
 	// Plugin/JS version
-	version: "1.0",
+	version: "1.2",
 
 	// no interaction. just display existing contents
 	readonly: false,
@@ -93,7 +93,7 @@ gdgt.product_selector = {
 			focus: function() {
 				return false;
 			},
-			minLength: 5,
+			minLength: 1,
 			open: function() {
 				var search_term = jQuery.trim( jQuery(this).data( "autocomplete" ).term );
 				if ( typeof search_term !== "string" || search_term === "" ) {
