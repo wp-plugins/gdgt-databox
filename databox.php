@@ -298,6 +298,8 @@ class GDGT_Databox {
 	 * @return string cache key
 	 */
 	public static function cache_key( $post_id ) {
+		global $content_width;
+
 		$cache_key_parts = array( 'gdgt-databox', 'v1' );
 		if ( is_multisite() ) {
 			$blog_id = absint( get_current_blog_id() );
@@ -308,20 +310,18 @@ class GDGT_Databox {
 
 		$cache_key_parts[] = 'p' . $post_id;
 
-		// separate cache for full vs. mini box
-		if ( GDGT_Databox::databox_type() === 'mini' )
-			$cache_key_parts[] = 'm';
+		// separate cache by content width. busts cache when switching themes
+		$width = 650;
+		if ( isset( $content_width ) ) {
+			if ( $content_width > 1000 )
+				$width = 1000;
+			else
+				$width = $content_width;
+		}
+		$cache_key_parts[] = 'w' . $width;
+		unset( $width );
 
 		$cache_key_parts[] = 'n' . absint( get_option( 'gdgt_max_products', 10 ) );
-
-		// store tab preference uniqueness
-		$tabs = array( 's','r' );
-		if ( (bool) get_option( 'gdgt_answers_tab', true ) )
-			$tabs[] = 'a';
-		if ( (bool) get_option( 'gdgt_discussions_tab', true ) )
-			$tabs[] = 'd';
-		$cache_key_parts[] = implode( '', $tabs );
-		unset( $tabs );
 
 		// display all products in fully expanded state
 		if ( (bool) get_option( 'gdgt_expand_products', false ) )
