@@ -4,6 +4,7 @@ Requires at least: 3.2
 Tested up to: 3.4
 Stable tag: 1.21
 License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: gdgt, gadgets, consumer electronics, reviews
 
 Display product specs, reviews, price data, and other useful, contextual data alongside your post content. Powered by gdgt.
