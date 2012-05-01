@@ -17,7 +17,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 * @var array
 	 */
-	public $required_tabs = array( 'specs', 'reviews' );
+	public $required_tabs = array( 'specs', 'reviews', 'prices' );
 
 	/**
 	 * Track all created options.

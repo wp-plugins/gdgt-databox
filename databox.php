@@ -192,6 +192,23 @@ class GDGT_Databox {
 	}
 
 	/**
+	 * Wrap a string in newline characters to separate from other content
+	 * Helps maintain content such as oEmbed and shortcodes needing to appear on their own line in the post content
+	 *
+	 * @since 1.22
+	 * @param string $content content you would like to wrap
+	 * @return string newline wrapped content
+	 */
+	public static function wrap_in_newlines( $content ) {
+		if ( empty( $content ) )
+			return $content;
+		if ( defined( 'PHP_EOL' ) )
+			return PHP_EOL . $content . PHP_EOL;
+		else
+			return "\n" . $content . "\n";
+	}
+
+	/**
 	 * Generate HTML markup for the gdgt Databox based on an array of products returned by the gdgt product module API
 	 *
 	 * @since 1.0
@@ -472,7 +489,7 @@ class GDGT_Databox {
 	 */
 	public function add_placeholder( $content ) {
 		$this->has_placeholder = true;
-		return $content . GDGT_Databox::placeholder;
+		return $content . GDGT_Databox::wrap_in_newlines( GDGT_Databox::placeholder );
 	}
 
 	/**
@@ -526,10 +543,11 @@ class GDGT_Databox {
 		if ( empty( $databox ) )
 			$databox = '';
 
+		// do we need to replace a placeholder?
 		if ( ! empty( $content ) && isset( $this->has_placeholder ) && $this->has_placeholder === true )
 			return str_replace( GDGT_Databox::placeholder, $databox, $content, GDGT_Databox::$placeholder_count );
 
-		return $content . $databox;
+		return $content . GDGT_Databox::wrap_in_newlines( $databox );
 	}
 
 	/**

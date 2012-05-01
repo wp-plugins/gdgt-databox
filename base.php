@@ -18,7 +18,7 @@ class GDGT_Base {
 	 * @since 1.0
 	 * @var string
 	 */
-	const PLUGIN_VERSION = '1.21';
+	const PLUGIN_VERSION = '1.22';
 
 	/**
 	 * Plugin slug used to differentiate this plugin and its message bundles, options, etc. from other WordPress plugins

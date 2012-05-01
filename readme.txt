@@ -2,7 +2,7 @@
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2
 Tested up to: 3.4
-Stable tag: 1.21
+Stable tag: 1.22
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: gdgt, gadgets, consumer electronics, reviews
@@ -81,6 +81,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.22 =
+
+* Fix issue with an oEmbed on the last line of the post when Databox priority 9 or earlier
+
 = 1.21 =
 
 * Improve caching for dynamic theme switchers
@@ -123,6 +127,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post
 
 == Upgrade Notice ==
+
+= 1.22 =
+
+Improve compatibility with WordPress Core content filters searching for content on its own line at the end of a post
 
 = 1.21 =
 
