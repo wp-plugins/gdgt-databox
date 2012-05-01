@@ -17,7 +17,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 * @var array
 	 */
-	public $required_tabs = array( 'specs', 'reviews' );
+	public $required_tabs = array( 'specs', 'reviews', 'prices' );
 
 	/**
 	 * Track all created options.
@@ -26,7 +26,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 * @var array
 	 */
-	public static $all_options = array( 'gdgt_activation_run_once', 'gdgt_apikey', 'gdgt_min_disable_capability', 'gdgt_stop_tags', 'gdgt_max_products', /*'gdgt_module_nav_style',*/ 'gdgt_expand_products', 'gdgt_schema_org', 'gdgt_specs_tab', 'gdgt_reviews_tab', 'gdgt_answers_tab', 'gdgt_discussions_tab', 'gdgt_new_tabs' );
+	public static $all_options = array( 'gdgt_activation_run_once', 'gdgt_apikey', 'gdgt_min_disable_capability', 'gdgt_stop_tags', 'gdgt_max_products', /*'gdgt_module_nav_style',*/ 'gdgt_expand_products', 'gdgt_schema_org', 'gdgt_specs_tab', 'gdgt_reviews_tab', 'gdgt_prices_tab', 'gdgt_new_tabs', 'gdgt_content_filter_priority' );
 
 	/**
 	 * Attach settings hooks
@@ -79,7 +79,10 @@ class GDGT_Settings extends GDGT_Base {
 		// multiple product display
 		add_settings_section( 'gdgt_product_list', __( 'Databox display settings', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_product_list_section' ), GDGT_Settings::PLUGIN_SLUG );
 		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_max_products', array( &$this, 'sanitize_max_products' ) );
-		add_settings_field( 'gdgt_max_products', __( 'Maximum products per Databox', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_max_products' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
+		add_settings_field( 'gdgt_content_width', __( 'Content width', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_content_width' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_feed_include', array( &$this, 'sanitize_feed_include' ) );
+		add_settings_field( 'gdgt_feed_include', __( 'Web feeds', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_feed_include' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
+		add_settings_field( 'gdgt_max_products', __( 'Maximum products', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_max_products' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 		//register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_module_nav_style', array( &$this, 'sanitize_module_nav_style' ) );
 		//add_settings_field( 'gdgt_module_nav_style', __( 'Module navigation style', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_module_nav_style' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 		//add_action( 'update_option_gdgt_module_nav_style', array( &$this, 'update_option_module_nav_style' ), 10, 2 );
@@ -90,6 +93,8 @@ class GDGT_Settings extends GDGT_Base {
 		}
 		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_schema_org', array( &$this, 'sanitize_schema_org' ) );
 		add_settings_field( 'gdgt_schema_org', __( 'Schema.org microdata', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_schema_org' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
+		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_content_filter_priority', array( &$this, 'sanitize_filter_priority' ) );
+		add_settings_field( 'gdgt_content_filter_priority', __( 'Content filter priority', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_filter_priority' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 
 		// overrides
 		add_settings_section( 'gdgt_restrictions', __( 'Access and restrictions', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_restrictions_section' ), GDGT_Settings::PLUGIN_SLUG );
@@ -111,8 +116,7 @@ class GDGT_Settings extends GDGT_Base {
 		return array(
 			'gdgt_specs_tab' => __( 'Key specs', GDGT_Settings::PLUGIN_SLUG ),
 			'gdgt_reviews_tab' => __( 'Reviews', GDGT_Settings::PLUGIN_SLUG ),
-			'gdgt_answers_tab' => __( 'Answers', GDGT_Settings::PLUGIN_SLUG ),
-			'gdgt_discussions_tab' => __( 'Discussions', GDGT_Settings::PLUGIN_SLUG )
+			'gdgt_prices_tab' => __( 'Prices', GDGT_Settings::PLUGIN_SLUG )
 		);
 	}
 
@@ -150,6 +154,12 @@ class GDGT_Settings extends GDGT_Base {
 		}
 	}
 
+	/**
+	 * Nag for gdgt API key if none stored
+	 *
+	 * @since 1.0
+	 * @uses update_option()
+	 */
 	public static function api_key_admin_notice() {
 		echo '<div id="gdgt-notice" class="updated fade"><p><strong>' . __( 'gdgt API key needed', GDGT_Settings::PLUGIN_SLUG ) . '</strong> ';
 		echo sprintf( __('Please <a href="%s">enter a valid API key</a> to begin using the %s.'), 'options-general.php?page=' . GDGT_Settings::PLUGIN_SLUG, GDGT_Settings::PLUGIN_NAME );
@@ -213,7 +223,7 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function settings_page_access_section() {
 		echo '<p>' . esc_html( sprintf( __( 'Your secret %s API key is required to enable Databox access.', GDGT_Settings::PLUGIN_SLUG ), 'gdgt' ) );
-		echo '<br /><a href="http://help.gdgt.com/customer/portal/articles/372033-gdgt-api-key" target="_blank">' . esc_html( __( 'Visit our API help page', GDGT_Settings::PLUGIN_SLUG ) ) . '</a> ' . esc_html( __( 'to learn more about gdgt API keys or to request a new key.', GDGT_Settings::PLUGIN_SLUG ) ) . '</p>';
+		echo '<br /><a href="http://help.gdgt.com/customer/portal/articles/372033" target="_blank">' . esc_html( __( 'Visit our API help page', GDGT_Settings::PLUGIN_SLUG ) ) . '</a> ' . esc_html( __( 'to learn more about gdgt API keys or to request a new key.', GDGT_Settings::PLUGIN_SLUG ) ) . '</p>';
 	}
 
 	/**
@@ -449,6 +459,105 @@ class GDGT_Settings extends GDGT_Base {
 	}*/
 
 	/**
+	 * Display content_width based on active theme. Helps a publisher better understand what is happening on the frontend.
+	 *
+	 * @since 1.1
+	 * @uses wp_get_theme()
+	 */
+	public function display_content_width() {
+		global $content_width;
+
+		// reference the theme and its child status
+		$theme_label = '';
+		if ( function_exists( 'wp_get_theme' ) ) { // WP 3.4+
+			$theme = wp_get_theme();
+			if ( $theme !== false ) {
+				$theme_label = $theme->get( 'Name' );
+				if ( ! empty( $theme_label ) ) {
+					$theme_label = esc_html( trim( $theme_label ) );
+					$theme_uri = $theme->get( 'ThemeURI' );
+					if ( ! empty( $theme_uri ) )
+						$theme_label = '<a href="' . esc_url( $theme_uri ) . '">' . $theme_label . '</a>';
+					unset( $theme_uri );
+					if ( $theme->is_child_theme )
+						$theme_label .= ' ' . __( 'or parent', GDGT_Settings::PLUGIN_SLUG );
+				}
+			}
+			unset( $theme );
+		} else if ( function_exists( 'get_current_theme' ) ) {
+			$theme_label = get_current_theme();
+			if ( ! empty( $theme_label ) )
+				$theme_label = esc_html( trim( $theme_label ) );
+		}
+
+		$databox_type = '';
+
+		if ( ! isset( $content_width ) ) {
+			echo esc_html( __( 'Not defined by theme', GDGT_Settings::PLUGIN_SLUG ) );
+		} else {
+			echo absint( $content_width ) . ' ' . __( 'pixels', GDGT_Settings::PLUGIN_SLUG ) . ', ' . __( 'defined by theme', GDGT_Settings::PLUGIN_SLUG );
+			if ( ! class_exists( 'GDGT_Databox' ) )
+				require_once( dirname( __FILE__ ) . '/databox.php' );
+			$databox_type = GDGT_Databox::databox_type();
+		}
+
+		if ( ! empty( $theme_label ) )
+			echo ' ' . $theme_label;
+
+		echo '<p>';
+		if ( isset( $content_width ) && $content_width < 550 ) {
+			echo esc_html( sprintf( __( 'Databox not displayed. Minimum width of %d pixels required.', GDGT_Settings::PLUGIN_SLUG ), 550 ) );
+		} else {
+			$databox_width = $content_width;
+			// cutoff at max width
+			if ( $databox_width > 1000 )
+				$databox_width = 1000;
+			$databox_template_width = 650;
+			if ( empty( $databox_type ) )
+				$databox_type = 'default';
+			else if ( $databox_type === 'mini' )
+				$databox_template_width = 550;
+			echo esc_html( sprintf( __( 'Displaying %1$s Databox: %2$u horizontal pixels fluid to %3$u.', GDGT_Settings::PLUGIN_SLUG ), $databox_type, $databox_template_width, $databox_width ) );
+		}
+		echo ' (<a href="http://help.gdgt.com/customer/portal/articles/409116" target="_blank">' . esc_html( _x( 'more info', 'more information', GDGT_Settings::PLUGIN_SLUG ) ) .  '</a>)</p>';
+	}
+
+	/**
+	 * Allow a publisher to disable Databox display in feeds
+	 *
+	 * @since 1.1
+	 */
+	public function display_feed_include() {
+		$id = 'gdgt_feed_include';
+		$existing_value = (bool) get_option( $id, true );
+		echo '<input type="checkbox" name="' . $id . '" id="' . $id . '" value="1"';
+		if ( $existing_value === true )
+			echo ' checked';
+		echo ' /> <label for="' . $id . '">' . esc_html( sprintf( __( 'Include %s after RSS or Atom feed full content', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</label>';
+	}
+
+	/**
+	 * Sanitize feed include checkbox value before saving
+	 *
+	 * @param string|bool checkbox value 1
+	 * @return string 1 or 0
+	 */
+	public function sanitize_feed_include( $true_false ) {
+		$option_name = 'gdgt_feed_include';
+		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
+		$existing_value = get_option( $option_name, '1' );
+		if ( $true_false != $existing_value ) {
+			if ( $true_false )
+				$message = sprintf( __( 'The %s will appear in feeds after full post content.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME );
+				
+			else
+				$message = sprintf( __( 'The %s will no longer appear in feeds.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME );
+			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
+		}
+		return $true_false;
+	}
+
+	/**
 	 * Display a select field to choose the maximum number of products to display in a post
 	 *
 	 * @since 1.0
@@ -463,7 +572,7 @@ class GDGT_Settings extends GDGT_Base {
 				echo ' selected';
 			echo '>' . $i . '</option>';
 		}
-		echo '</select>';
+		echo '</select> <label for="' . $id . '">' . esc_html( __( 'Maximum number of products per Databox', 'gdgt-databox' ) ) . '</label>';
 	}
 
 	/**
@@ -613,6 +722,57 @@ class GDGT_Settings extends GDGT_Base {
 	}
 
 	/**
+	 * Display a number input to set a custom filter priority
+	 *
+	 * @since 1.1
+	 */
+	public function display_filter_priority() {
+		global $wp_filter;
+
+		$option_name = 'gdgt_content_filter_priority';
+		$existing_value = absint( get_option( $option_name, 1 ) );
+		if ( $existing_value < 1 )
+			$existing_value = 1;
+		else if ( $existing_value > 100 )
+			$existing_value = 100;
+		echo '<input type="number" name="' . $option_name . '" id="' . $option_name .  '" value="' . $existing_value . '" min="1" max="100" />';
+		echo '<p><label for="' . $option_name . '">' . esc_html( sprintf( __( 'Other plugins may also add content alongside the %s at the end of your posts.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . ' ' . esc_html( sprintf( __( 'Enter a priority value between %1$d and %2$d to reorder where the %3$s appears.', GDGT_Settings::PLUGIN_SLUG ), 1, 100, GDGT_Settings::PLUGIN_NAME ) ) .'</label></p>';
+		echo '<p><strong>' . esc_html( _x( 'Note:', 'take notice', GDGT_Settings::PLUGIN_SLUG ) ) .  '</strong> ' . esc_html( sprintf( __( 'the lower the number, the earlier its execution, meaning it will appear higher up the page. A priority of %1$d will show the %3$s above another plugin acting on the same content filter with a priority of %2$d.', GDGT_Settings::PLUGIN_SLUG ), 5, 17, GDGT_Settings::PLUGIN_NAME ) ) . '</p>';
+
+		if ( ! class_exists( 'GDGT_Filter_Info' ) )
+			include_once( dirname(__FILE__) . '/filter-info.php' );
+
+		$filter_info = GDGT_Filter_Info::display_plugin_priorities_by_filter( 'the_content' );
+		if ( ! empty( $filter_info ) )
+			echo $filter_info;
+	}
+
+	/**
+	 * Sanitize a filter priority to an integer between 1 and 20
+	 *
+	 * @since 1.1
+	 * @param string|int $priority 
+	 */
+	public function sanitize_filter_priority( $priority ) {
+		$priority = absint( $priority );
+		if ( $priority < 1 )
+			$priority = 1;
+		else if ( $priority > 100 )
+			$priority = 100;
+		$option_name = 'gdgt_content_filter_priority';
+		$existing_value = absint( get_option( $option_name, 1 ) );
+		if ( $priority !== $existing_value ) {
+			if ( $priority > $existing_value )
+				$verb = _x( 'increased', 'positive numeric change: 1 to 2', GDGT_Settings::PLUGIN_SLUG );
+			else
+				$verb = _x( 'decreased', 'negative numeric change: 2 to 1', GDGT_Settings::PLUGIN_SLUG );
+			add_settings_error( $option_name, $option_name . '_updated', sprintf( __( 'Content filter priority %1$s from %2$u to %3$u.', GDGT_Settings::PLUGIN_SLUG ), $verb, $existing_value, $priority ), 'updated' );
+			unset( $verb );
+		}
+		return $priority;
+	}
+
+	/**
 	 * Convert checked and other boolean-like values into a bool
 	 *
 	 * @since 1.0
@@ -711,67 +871,22 @@ class GDGT_Settings extends GDGT_Base {
 	}
 
 	/**
-	 * Display the option to include or exclude the answers tab from the gdgt product module
+	 * Display the option to include or exclude the prices tab from the gdgt product module
 	 *
-	 * @since 1.0
+	 * @since 1.2
 	 */
-	public function display_answers_tab() {
-		$this->display_tab( 'gdgt_answers_tab' );
+	public function display_prices_tab() {
+		$this->display_tab( 'gdgt_prices_tab', true );
 	}
 
-	/**
-	 * Sanitize answers tab to boolean.
-	 * Compare value against stored value or true if no stored value.
-	 * If preference changed communicate the change in an updated message
+	/* Force reviews tab display preference to true
 	 *
-	 * @since 1.0
-	 * @param string $true_false input checkbox POST value
-	 * @return string 1 for true, 0 for false
+	 * @since 1.2
+	 * @param string $true_false checkbox POST
+	 * @return string "1"
 	 */
-	public function sanitize_answers_tab( $true_false ) {
-		$option_name = 'gdgt_answers_tab';
-		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
-		$existing_value = get_option( $option_name, '1' );
-		if ( $true_false != $existing_value ) {
-			if ( $true_false )
-				$message = __( 'The answers tab will now appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
-			else
-				$message = __( 'The answers tab will no longer appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
-			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
-		}
-		return $true_false;
-	}
-
-	/**
-	 * Display the option to include or exclude the discussions tab from the gdgt product module
-	 *
-	 * @since 1.0
-	 */
-	public function display_discussions_tab() {
-		$this->display_tab( 'gdgt_discussions_tab' );
-	}
-
-	/**
-	 * Sanitize discussions tab to boolean.
-	 * Compare value against stored value or true if no stored value.
-	 * If preference changed communicate the change in an updated message
-	 *
-	 * @since 1.0
-	 * @param string $true_false input checkbox POST value
-	 * @return string 1 for true, 0 for false
-	 */
-	public function sanitize_discussions_tab( $true_false ) {
-		$option_name = 'gdgt_discussions_tab';
-		$true_false = GDGT_Settings::sanitize_bool_preference( $true_false );
-		$existing_value = get_option( $option_name, '1' );
-		if ( $true_false != $existing_value ) {
-			if ( $true_false )
-				$message = __( 'The discussions tab will now appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
-			else
-				$message = __( 'The discussions tab will no longer appear in the databox.', GDGT_Settings::PLUGIN_SLUG );
-			add_settings_error( $option_name, $option_name . '_confirm', $message, 'updated' );
-		}
-		return $true_false;
+	public function sanitize_prices_tab( $true_false ) {
+		return '1';
 	}
 
 	/**
