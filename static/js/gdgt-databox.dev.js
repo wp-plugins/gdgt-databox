@@ -345,7 +345,7 @@ gdgt.databox = {
 					_gaq = [];
 				}
 				_gaq.push( function() {
-					var tracker = _gat._createTracker( gdgt.databox.analytics.google.account, 'gdgt' );
+					var tracker = _gat._createTracker( gdgt.databox.analytics.google.account, "gdgt" );
 					tracker._getLinkerUrl( "http://gdgt.com/" );
 					tracker._setDomainName( "gdgt.com" );
 					tracker._setAllowLinker( true );

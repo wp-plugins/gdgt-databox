@@ -26,7 +26,7 @@ class GDGT_Settings extends GDGT_Base {
 	 * @since 1.0
 	 * @var array
 	 */
-	public static $all_options = array( 'gdgt_activation_run_once', 'gdgt_apikey', 'gdgt_min_disable_capability', 'gdgt_stop_tags', 'gdgt_max_products', /*'gdgt_module_nav_style',*/ 'gdgt_expand_products', 'gdgt_schema_org', 'gdgt_specs_tab', 'gdgt_reviews_tab', 'gdgt_prices_tab', 'gdgt_new_tabs', 'gdgt_content_filter_priority' );
+	public static $all_options = array( 'gdgt_activation_run_once', 'gdgt_apikey', 'gdgt_min_disable_capability', 'gdgt_stop_tags', 'gdgt_max_products', 'gdgt_expand_products', 'gdgt_schema_org', 'gdgt_specs_tab', 'gdgt_reviews_tab', 'gdgt_prices_tab', 'gdgt_new_tabs', 'gdgt_content_filter_priority' );
 
 	/**
 	 * Attach settings hooks
@@ -50,8 +50,10 @@ class GDGT_Settings extends GDGT_Base {
 		// warn about no API key
 		GDGT_Settings::api_key_reminder();
 
-		if ( isset( $this->hook_suffix ) && is_string( $this->hook_suffix ) )
+		if ( isset( $this->hook_suffix ) && is_string( $this->hook_suffix ) ) {
 			add_action( 'admin_print_scripts-' . $this->hook_suffix, array( &$this, 'enqueue_scripts' ) );
+			add_action( 'admin_print_styles-' . $this->hook_suffix, array( &$this, 'enqueue_styles' ) );
+		}
 
 		// API key
 		add_settings_section( 'gdgt_access', __( 'API access', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'settings_page_access_section' ), GDGT_Settings::PLUGIN_SLUG );
@@ -188,6 +190,46 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function settings_menu_item() {
 		$this->hook_suffix = add_options_page( GDGT_Settings::PLUGIN_NAME, GDGT_Settings::PLUGIN_NAME, 'manage_options', GDGT_Settings::PLUGIN_SLUG, array( &$this, 'settings_page' ) );
+		if ( $this->hook_suffix )
+			add_action( 'load-' . $this->hook_suffix, array( &$this, 'settings_help' ) );
+	}
+
+	/**
+	 * Add contextual help to settings page
+	 *
+	 * @since 1.23
+	 */
+	public function settings_help() {
+		// check for WordPress 3.3 Screen API
+		if ( ! class_exists( 'WP_Screen' ) || ! method_exists( 'WP_Screen', 'get' ) )
+			return;
+		$this->admin_screen = WP_Screen::get( $this->hook_suffix );
+		if ( ! $this->admin_screen )
+			return;
+
+		// helpful links on the side
+		// allow help URL override for publishers who prefer to display an internal help document
+		$this->admin_screen->set_help_sidebar( '<p><strong>' . esc_html( __( 'More information:', GDGT_Settings::PLUGIN_SLUG ) ) . '</strong></p>' . '<ul><li><a href="http://gdgt.com/api/">' . esc_html( __( 'Manage your API key', GDGT_Settings::PLUGIN_SLUG ) ) . '</a></li><li><a href="' . esc_url( apply_filters( 'gdgt_help_url', 'http://help.gdgt.com/customer/portal/topics/171111-gdgt-databox-plugin-for-wordpress/articles' ) ) . '">' . esc_html( sprintf( __( '%s help', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</a></li></ul>' );
+
+		$this->admin_screen->add_help_tab( array(
+			'id' => 'apikey-help',
+			'title' => __( 'API key', GDGT_Settings::PLUGIN_SLUG ),
+			'content' => '<p>' . esc_html( sprintf( __( 'A %1$s API key uniquely identifies your account and its content to %1$s servers. An API key is required to enable %2$s functionality beyond basic settings.', GDGT_Settings::PLUGIN_SLUG ), 'gdgt', 'Databox' ) ) . '</p>'
+		) );
+		$this->admin_screen->add_help_tab( array(
+			'id' => 'product-display-help',
+			'title' => __( 'Product display', GDGT_Settings::PLUGIN_SLUG ),
+			'content' => '<p>' . esc_html( sprintf( __( 'Future versions of %1$s may introduce new optional tabs. These tabs will be included in %1$s output by default. If you wish to manually control any new optional tabs please update your product display settings.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</p>'
+		) );
+		$this->admin_screen->add_help_tab( array(
+			'id' => 'databox-display-help',
+			'title' => __( 'Databox display', GDGT_Settings::PLUGIN_SLUG ),
+			'content' => '<p>' . sprintf( __( 'The %1$s honors the %2$s <a href="%3$s" title="WordPress themes required hooks and navigation">required</a> global variable set by themes to communicate the pixel width of your post\'s main content column. This variable is typically set near the beginning of your theme\'s %4$s file.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME, '<var>content_width</var>', 'http://codex.wordpress.org/Theme_Review#Required_Hooks_and_Navigation', '<kbd>functions.php</kbd>' ) . '</p><p>' . esc_html( sprintf( __( 'A special version of the %1$s suitable for display in Google Reader (and other feed readers) appears in your site\'s RSS 2.0 and/or Atom Syndication Format feeds after the full content of your post. Disable this option if you prefer not to have the %1$s displayed in your feeds.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</p><p>' . esc_html( sprintf( __( 'A %1$s can display up to $2%u products (although you may choose to lower that limit). In the default settings, the first product in a %1$s appears expanded with subsequent products collapsed (but still instantly expandable by your visitors). You many choose to display all products in their fully expanded state.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME, 10 ) ) . '</p><p>' . sprintf( esc_html( __( '%1$s markup adds semantic meaning to %2$s content, helping indexers (such as %3$s) identify products and their reviews, pricing, and other structured data. %3$s may even use this data to display special %4$s content alongside your post in its search results, increasing your search conversion. (This feature requires %5$s which may break strict themes; try disabling it if you are having issues.)', GDGT_Settings::PLUGIN_SLUG ) ), '<a href="http://schema.org/">Schema.org</a>', GDGT_Settings::PLUGIN_NAME, 'Google', '<a href="http://support.google.com/webmasters/bin/answer.py?answer=99170">' . esc_html( _x( 'rich snippets', 'additional context summaries', GDGT_Settings::PLUGIN_SLUG ) ) . '</a>', '<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html">' . esc_html( __( 'HTML5 microdata', GDGT_Settings::PLUGIN_SLUG ) ) . '</a>' ) . '</p><p>' . esc_html( sprintf( __( 'If you happen to have multiple plugins acting on the same WordPress content filters used to display plugin content (such as sharing buttons, related posts, etc.), you can increase or decrease the priority of the %s to ensure it displays before or after other content plugins accordingly.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</p>'
+		) );
+		$this->admin_screen->add_help_tab( array(
+			'id' => 'restrictions-help',
+			'title' => __( 'Restrictions', GDGT_Settings::PLUGIN_SLUG ),
+			'content' => '<p>' . esc_html( sprintf( __( 'The %s may be disabled on individual posts by a WordPress user with sufficient permissions, or across all posts containing any of the specified stop-tags.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</p><p>' . esc_html( sprintf( __( 'Sites with editorial workflows that rely on specific user roles and capabilities may also want to limit the ability to disable the %s.', GDGT_Settings::PLUGIN_SLUG ), GDGT_Settings::PLUGIN_NAME ) ) . '</p>' ) );
 	}
 
 	/**
@@ -197,7 +239,15 @@ class GDGT_Settings extends GDGT_Base {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( GDGT_Settings::PLUGIN_SLUG . '-settings-js', plugins_url( 'static/js/gdgt-settings.js', __FILE__ ), array( 'jquery' ), GDGT_Settings::PLUGIN_VERSION );
-		wp_enqueue_style( 'gdgt-settings', plugins_url( 'static/css/settings.css', __FILE__ ), array(), GDGT_Settings::PLUGIN_VERSION );
+	}
+
+	/**
+	 * Include one or more styles on the settings page
+	 *
+	 * @since 1.23
+	 */
+	public function enqueue_styles() {
+		wp_enqueue_style( GDGT_Settings::PLUGIN_SLUG . '-settings-css', plugins_url( 'static/css/settings.css', __FILE__ ), array(), GDGT_Settings::PLUGIN_VERSION );
 	}
 
 	/**
@@ -434,31 +484,6 @@ class GDGT_Settings extends GDGT_Base {
 	}
 
 	/**
-	 * Catch new stop tag values after they are added via settings page
-	 * Communicate change to user
-	 * @todo: update gdgt
-	 *
-	 * @param string $old_tags old value. or option name if called from add_option
-	 * @param string $new_tags new value
-	 
-	public function stop_tags_update( $old_tags, $new_tags ) {
-		$option_name = 'gdgt_stop_tags';
-
-		if ( empty( $old_tags ) || $old_tags == $option_name )
-			$old_tags = array();
-		else
-			$old_tags = explode( ',', $old_tags );
-
-		if ( empty( $new_tags ) )
-			$new_tags = array();
-		else
-			$new_tags = explode( ',', $new_tags );
-
-		// find affected posts
-		// send to gdgt
-	}*/
-
-	/**
 	 * Display content_width based on active theme. Helps a publisher better understand what is happening on the frontend.
 	 *
 	 * @since 1.1
@@ -597,61 +622,6 @@ class GDGT_Settings extends GDGT_Base {
 	}
 
 	/**
-	 * Radio options for method of navigation between two or more products
-	 * commented out: only manual nav supported for now
-	 
-	public function display_module_nav_style() {
-		$id = 'gdgt_module_nav_style';
-		$default_value = 'manual';
-		$existing_value = get_option( $id, $default_value );
-		$choices = array(
-			'accordion' => __( 'Accordion: collapse the previously expanded module when a viewer selects a new module.', GDGT_Settings::PLUGIN_SLUG ),
-			'manual' => __( 'Manual: expand and collapse individual modules.' , GDGT_Settings::PLUGIN_SLUG )
-		);
-		if ( ! array_key_exists( $existing_value, $choices ) )
-			$existing_value = $default_value;
-		unset( $default_value );
-
-		foreach( $choices as $choice => $label ) {
-			$choice_id = $id . '_' . $choice;
-			echo '<div><input type="radio" name="' . $id .'" id="' . $choice_id . '" value="' . $choice . '"';
-			if ( $existing_value === $choice )
-				echo ' checked';
-			echo ' /> <label for="' . $choice_id . '">' . esc_html( $label ) . '</label></div>';
-		}
-	} */
-
-	/**
-	 * Make sure the passed in nav style option is a true choice
-	 *
-	 * @param string $choice navigation option
-	 * @return string allowed navigation option or empty string
-	 
-	public function sanitize_module_nav_style( $choice ) {
-		if ( in_array( $choice, array( 'accordion', 'manual' ) ) )
-			return $choice;
-		return '';
-	} */
-
-	/**
-	 * It's possible a user might select both accordion style navigation between products and auto-expand by default
-	 * If that happens we should turn off auto-expand
-	 *
-	 * @param string $old_value old option value
-	 * @param string $new_value new option value
-	 
-	public function update_option_module_nav_style( $old_value, $new_value ) {
-		if ( $old_value == $new_value || $new_value != 'accordion' )
-			return;
-		$expand_option = 'gdgt_expand_products';
-		if ( (bool) get_option( $expand_option, false ) == true ) {
-			remove_action( 'update_option_gdgt_expand_products', array( &$this, 'update_option_expand_products' ), 11, 2 );
-			update_option( $expand_option, false );
-			$this->force_expand = false;
-		}
-	} */
-
-	/**
 	 * Auto-expand products on display
 	 *
 	 * @since 1.0
@@ -664,26 +634,6 @@ class GDGT_Settings extends GDGT_Base {
 			echo ' checked';
 		echo ' /> <label for="' . $id . '">' . esc_html( __( 'Expand all products on initial page load', GDGT_Settings::PLUGIN_SLUG ) ) . '</label>';
 	}
-
-	/**
-	 * It's possible a user might choose to auto-expand products while the accordion preference is set.
-	 * Check the value of nav style when auto-expand option is updated to make sure they align.
-	 *
-	 * @see update_option()
-	 * @param bool $old_value old option value
-	 * @param bool $new_value new option value
-
-	public function update_option_expand_products( $old_value, $new_value ) {
-		if ( (bool) $new_value == false || $old_value == $new_value )	
-			return;
-		$nav_option = 'gdgt_module_nav_style';
-		$required_option = 'manual';
-		$nav_style = get_option( $nav_option );
-		if ( empty( $nav_style ) )
-			add_option( $nav_option, $required_option );
-		else if ( $nav_style !== $required_option )
-			update_option( $nav_option, $required_option );
-	} */
 
 	/**
 	 * Display an option checkbox to enable or disable Schema.org markup

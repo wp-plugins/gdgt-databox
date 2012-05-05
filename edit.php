@@ -47,7 +47,30 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 		foreach ( array( 'post-new.php', 'post.php' ) as $page ) {
 			add_action( 'admin_print_scripts-' . $page, array( &$this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles-' . $page, array( &$this, 'enqueue_styles') );
+			add_action( 'admin_head-' . $page, array( &$this, 'add_help_tab' ) );
 		}
+	}
+
+	/**
+	 * Display help documentation in edit and add post screens
+	 * Hide help documentation if user has hidden the referenced metabox at the time of pageload
+	 *
+	 * @since 1.3
+	 */
+	public function add_help_tab() {
+		$screen = get_current_screen();
+		if ( ! method_exists( $screen, 'add_help_tab' ) )
+			return;
+		$hidden_post_boxes = maybe_unserialize( get_user_option( 'metaboxhidden_post' ) );
+		if ( ! empty( $hidden_post_boxes ) && is_array( $hidden_post_boxes ) && in_array( GDGT_Post_Meta_Box::BASE_ID, $hidden_post_boxes, true ) )
+			return;
+		unset( $hidden_post_boxes );
+		$max_products = absint( get_option( 'gdgt_max_products', 10 ) );
+		$screen->add_help_tab( array(
+			'id' => GDGT_Post_Meta_Box::BASE_ID . '-help',
+			'title' => GDGT_Post_Meta_Box::PLUGIN_NAME,
+			'content' => '<p>' . esc_html( sprintf( __( 'The %1$s builds a list of up to %2$u products by matching products based on your post tags or when you manually include a product in the post editor.', GDGT_Post_Meta_Box::PLUGIN_SLUG ), GDGT_Post_Meta_Box::PLUGIN_NAME, $max_products ) ) . '</p><p>' . esc_html( sprintf( __( 'You can manually add products by entering text into keyword search tool located at the bottom of the %s editor and selecting a product from the list of results. If your post is related to a specific product configuration or special edition you may wish to select that model from the list (e.g. tablet with mobile broadband vs. tablet with only Wi-Fi).', GDGT_Post_Meta_Box::PLUGIN_SLUG ), GDGT_Post_Meta_Box::PLUGIN_NAME ) ) . '</p><p>' . esc_html( sprintf( __( 'Products may also be manually excluded from automatic matching by manually adding that product to your %1$s list, then clicking the %2$s button.', GDGT_Post_Meta_Box::PLUGIN_SLUG ), __( 'Displayed', GDGT_Post_Meta_Box::PLUGIN_SLUG ), __( 'Delete', GDGT_Post_Meta_Box::PLUGIN_SLUG ) ) ) . '</p>'
+		) );
 	}
 
 	/**
@@ -83,6 +106,11 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 	 * @param string hook name. scope the enqueue to just the admin pages we care about
 	 */
 	public function enqueue_scripts() {
+		// if jQuery not present load from Google CDN
+		wp_enqueue_script( 'jquery', is_ssl() ? 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', array(), null );
+		// handle case of no jQuery UI autocomplete in WordPress 3.2. load jQuery UI autocomplete 3.2.1 to match 3.2 version
+		wp_enqueue_script( 'jquery-ui-autocomplete', plugins_url( 'static/js/jquery/ui/jquery.ui.autocomplete.min.js', __FILE__ ), array( 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position' ), '1.8.12' );
+
 		$js_filename = 'gdgt-product-selector.js';
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true )
 			$js_filename = 'gdgt-product-selector.dev.js';

@@ -34,7 +34,7 @@ class GDGT_Google_Analytics {
 	 * @return string
 	 */
 	public function __toString() {
-		$id = 'gdgt Google Analtyics builder';
+		$id = 'gdgt Google Analytics builder';
 		if ( isset( $this->account ) )
 			return $id . ': ' . $this->account;
 		else

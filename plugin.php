@@ -6,7 +6,7 @@
 Plugin Name: gdgt Databox
 Plugin URI: http://gdgt.com/
 Description: Display gadget specifications, reviews, and prices alongside your content. Requires a gdgt API key.
-Version: 1.22
+Version: 1.23
 Author: gdgt
 Author URI: http://gdgt.com/
 License: GPL v2 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html

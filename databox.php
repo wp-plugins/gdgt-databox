@@ -124,10 +124,7 @@ class GDGT_Databox {
 		$js_filename = 'gdgt-databox.js';
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true )
 			$js_filename = 'gdgt-databox.dev.js';
-		$jquery = 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
-		if ( is_ssl() )
-			$jquery = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
-		wp_enqueue_script( 'jquery', $jquery, array(), null );
+		wp_enqueue_script( 'jquery', is_ssl() ? 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', array(), null );
 		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.2' );
 	}
 
@@ -317,7 +314,7 @@ class GDGT_Databox {
 	public static function cache_key( $post_id ) {
 		global $content_width;
 
-		$cache_key_parts = array( 'gdgt-databox', 'v1' );
+		$cache_key_parts = array( 'gdgt-databox', 'v1.23' );
 		if ( is_multisite() ) {
 			$blog_id = absint( get_current_blog_id() );
 			if ( $blog_id > 0 )

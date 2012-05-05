@@ -21,6 +21,8 @@ class GDGT_Databox_Product {
 		if ( isset( $product->title_url ) )
 			$this->url = $product->title_url;
 
+		if ( isset( $product->product_uuid ) )
+			$this->id = $product->product_uuid;
 		if ( isset( $product->product_name ) )
 			$this->name = $product->product_name;
 		if ( isset( $product->company_name ) ) {
@@ -237,6 +239,8 @@ class GDGT_Databox_Product {
 		unset( $browsing_context );
 
 		$html = '<div class="gdgt-product ';
+		if ( isset( $this->id ) )
+			$html .= sanitize_html_class( 'gdgt-product-' . $this->id ) . ' ';
 		if ( $is_expanded === true )
 			$html .= 'expanded" aria-expanded="true"';
 		else
@@ -251,10 +255,12 @@ class GDGT_Databox_Product {
 			$collapsed_name .= ' aria-label="' . esc_attr( $this->company->name ) . ' ' . esc_attr( $this->name ) . '">';
 			$collapsed_name .= '<noscript><a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '"></noscript>';
 			if ( $schema_org === true ) {
-				if ( isset( $this->company->url ) )
+				if ( isset( $this->company->url ) ) {
 					$html .= '<link itemprop="brand" href="' . esc_url( $this->company->url , array( 'http', 'https' ) ) . '" title="' . esc_attr( $this->company->name ) . '" />';
-				else
+					$collapsed_name .= esc_html( $this->company->name ) . ' ';
+				} else {
 					$collapsed_name .= '<span itemprop="brand" itemscope itemtype="http://schema.org/Corporation"><span itemprop="name">' . esc_html( $this->company->name ) . '</span></span> ';
+				}
 				$collapsed_name .= '<strong itemprop="model">' . esc_html( $this->name ) . '</strong>';
 			} else {
 				$collapsed_name .= esc_html( $this->company->name ) . ' <strong>' . esc_html( $this->name ) . '</strong>';

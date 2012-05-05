@@ -1,8 +1,8 @@
 === gdgt Databox ===
 Contributors: gdgt, niallkennedy
-Requires at least: 3.2
+Requires at least: 3.2.1
 Tested up to: 3.4
-Stable tag: 1.22
+Stable tag: 1.23
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: gdgt, gadgets, consumer electronics, reviews
@@ -81,6 +81,12 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.23 =
+
+* Bundle jQuery UI autocomplete for WordPress 3.2 installations
+* Contextual help added to settings page and add/edit post screens
+* Display company name in collapsed product view when Schema.org enabled
+
 = 1.22 =
 
 * Fix issue with an oEmbed on the last line of the post when Databox priority 9 or earlier
@@ -127,6 +133,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post
 
 == Upgrade Notice ==
+
+= 1.23 =
+
+WordPress 3.2 compatibility improvements. Contextual help. Display company name in collapsed product view.
 
 = 1.22 =
 
