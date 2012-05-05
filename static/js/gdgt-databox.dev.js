@@ -1,17 +1,22 @@
 var gdgt = gdgt || {};
 gdgt.databox = {
 	// Plugin/JS version
-	version: "1.0",
+	version: "1.2",
 
 	// override me with translated strings
-	labels: { collapse: "collapse", expand: "expand" },
+	labels: { collapse: "collapse", expand: "expand", show_more_prices: "show <strong></strong> more prices", show_more_prices_singular: "show <strong></strong> more price" },
 
 	lazy_load_images: function( container ) {
 		if ( container.length === 0 ) {
 			return;
 		}
 		container.find( "noscript.img" ).each( function() {
-			jQuery( this ).parent().html( jQuery( jQuery(this).text() ) );
+			var noscript = jQuery(this);
+			var html = jQuery( noscript.data( "html" ) );
+			if ( html.length > 0 ) {
+				noscript.replaceWith( html );
+			}
+			noscript=html=null;
 		} );
 	},
 
@@ -47,6 +52,7 @@ gdgt.databox = {
 				if ( content_div.data( "loaded" ) !== true ) {
 					gdgt.databox.lazy_load_images( content_div );
 					content_div.data( "loaded", true );
+					content_div.trigger( tab_data_class + "-onload" );
 					// don't let an analytics fail interrupt navigation
 					try {
 						// track the event
@@ -58,6 +64,72 @@ gdgt.databox = {
 				content_div.attr( "aria-hidden", "true" );
 			}
 		} );
+	},
+
+    // treat lowest price display click the same as a prices tab click
+	lowest_price_onclick_handler: function() {
+		jQuery(this).closest( ".gdgt-product-wrapper" ).find( ".gdgt-tabs li.prices" ).trigger( "click" );
+	},
+
+	// hide offers if more than three offers available
+	prices_new_offers_handler: function() {
+		var offers_list = jQuery(this);
+		if ( offers_list.length === 0 ) {
+			return;
+		}
+		var offers = offers_list.children();
+		if ( offers.length > 3 ) {
+			offers.each( function( index ) {
+				if ( index > 2 ) {
+					jQuery(this).hide();
+				}
+			} );
+			var show_more = jQuery( "<span />" ).addClass( "gdgt-show-more-prices" );
+			if ( offers.length === 4 ) {
+				show_more.html( gdgt.databox.labels.show_more_prices_singular );
+			} else {
+				show_more.html( gdgt.databox.labels.show_more_prices );
+			}
+			show_more.find( "strong" ).text( offers.length - 3 );
+			show_more.append( jQuery( "<small />" ) );
+			show_more.click( gdgt.databox.prices_show_extra_offers );
+			offers_list.after( show_more );
+		}
+	},
+
+	// display previously hidden offers on visitor selection
+	prices_show_extra_offers: function() {
+		var prices_tab_content = jQuery(this).closest( ".gdgt-content-prices" );
+		if ( prices_tab_content.length === 0 ) {
+			return;
+		}
+		prices_tab_content.find( ".gdgt-price-retailers li:hidden" ).show();
+		prices_tab_content.find( ".gdgt-show-more-prices" ).remove();
+	},
+
+	// swap listed offers when a visitor chooses a specific product configuration or model
+	prices_model_onchange_handler: function() {
+		var model = jQuery(this).find( "option:selected" );
+		if ( model.length === 0 ) {
+			return;
+		}
+		var model_offers = model.data( "gdgtOffers" );
+		if ( jQuery.type( model_offers ) !== "string" ) {
+			return;
+		}
+		var prices_tab_content = model.closest( ".gdgt-content-prices" );
+		if ( prices_tab_content.length === 0 ) {
+			return;
+		}
+		prices_tab_content.find( ".gdgt-show-more-prices" ).remove();
+		var offers_list = prices_tab_content.find( ".gdgt-price-retailers" );
+		if ( offers_list.length === 0 ) {
+			offers_list = jQuery( "<ol />" ).addClass( "gdgt-price-retailers" ).html( model_offers ).bind( "gdgt-content-prices-newoffers", gdgt.databox.prices_new_offers_handler );
+			prices_tab_content.append( offers_list );
+		} else {
+			offers_list.html( model_offers );
+		}
+		offers_list.trigger( "gdgt-content-prices-newoffers" );
 	},
 
 	// expand product view
@@ -109,7 +181,19 @@ gdgt.databox = {
 		});
 
 		// enable tab navigation
-		databoxes.find( ".gdgt-tabs li" ).click( gdgt.databox.tab_onclick_handler );
+		databoxes.find( ".gdgt-tabs li" ).not( ".disabled" ).click( gdgt.databox.tab_onclick_handler );
+		// lowest price element has same interaction as the price tab label
+		databoxes.find( ".gdgt-product-price" ).click( gdgt.databox.lowest_price_onclick_handler );
+		databoxes.find( ".gdgt-content-prices" ).one( "gdgt-content-prices-onload", function() {
+			var prices_tab_content = jQuery(this);
+			prices_tab_content.find( ".gdgt-prices-configs" ).change( gdgt.databox.prices_model_onchange_handler );
+			var offers = prices_tab_content.find( ".gdgt-price-retailers" );
+			if ( offers.length === 0 ) {
+				return;
+			}
+			offers.bind( "gdgt-content-prices-newoffers", gdgt.databox.prices_new_offers_handler );
+			offers.trigger( "gdgt-content-prices-newoffers" );
+		} );
 
 		// expand/collapse capability for all products but the first
 		databoxes.children().not( ":first-child" ).each( function() {
@@ -261,7 +345,7 @@ gdgt.databox = {
 					_gaq = [];
 				}
 				_gaq.push( function() {
-					var tracker = _gat._createTracker( gdgt.databox.analytics.google.account, 'gdgt' );
+					var tracker = _gat._createTracker( gdgt.databox.analytics.google.account, "gdgt" );
 					tracker._getLinkerUrl( "http://gdgt.com/" );
 					tracker._setDomainName( "gdgt.com" );
 					tracker._setAllowLinker( true );
