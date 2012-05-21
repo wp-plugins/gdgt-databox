@@ -1,0 +1,189 @@
+// prices tab content
+#gdgt-wrapper {
+  .gdgt-content-prices {
+    text-align: center;
+  }
+
+  .gdgt-price-instances {
+    height: 30px;
+    text-align: left;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #CCC;
+
+    p {
+      float: left;
+      margin-top: 3px;
+      margin-bottom: 0;
+      margin-left: 0;
+      margin-right: 8px;
+      font-size: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    select {
+      float: left;
+      max-width: 350px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: 13px !important;
+      vertical-align: middle;
+    }
+  }
+
+  .gdgt-price-retailers {
+    margin-top: 0;
+    margin-bottom: 8px;
+
+    li {
+      .clearfix();
+      min-height: 30px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 8px;
+      padding-right: 8px;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: #EEE;
+      line-height: 1em;
+    }
+
+    .gdgt-button {
+      float: right;
+    }
+
+    .gdgt-button.blue {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      padding-left: 20px;
+      padding-right: 20px;
+      margin-top: 2px;
+      margin-bottom: 0;
+      margin-left: 0;
+      margin-right: 0;
+      background-color: #3399CC;
+      border: 0 !important;
+      font-size: 12px;
+      color: #FFF;
+
+      &:hover {
+        background-color: #006699;
+      }
+
+      &:active {
+        background-color: #005588;
+      }
+    }
+  }
+
+  .gdgt-price-seller {
+    float: left;
+    width: 25%;
+    height: 31px;
+    text-align: left;
+
+    a {
+      color: #3399CC;
+      font-size: 16px;
+      :hover .gdgt-price-seller-name {
+        background-color: #3399CC;
+        color: #FFF;
+      }
+    }
+
+    .gdgt-price-seller-name {
+      line-height: 31px;
+    }
+  }
+
+  .gdgt-featured-seller-highlight .gdgt-price-seller {
+    height: auto;
+  }
+
+  .gdgt-price-details {
+    float: left;
+    width: 50%;
+    padding-top: 9px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+
+    a {
+      padding-top: 1px;
+      padding-bottom: 1px;
+      padding-left: 3px;
+      padding-right: 3px;
+      font-size: 24px;
+      color: #3399CC;
+
+      &:hover {
+        background-color: #3399CC;
+        color: #FFF;
+      }
+    }
+
+    .gdgt-aside {
+      color: #898989;
+    }
+  }
+
+  .gdgt-featured-seller-highlight {
+    padding: 2px 8px !important;
+    background-color: #FFFBD9;
+
+    .gdgt-price-details {
+      padding-top: 18px;
+    }
+
+    .gdgt-button {
+      margin-top: 11px !important;
+    }
+  }
+
+  .gdgt-featured-seller-label {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 2px;
+    font-size: 10px;
+    color: #CC0000;
+    text-indent: 8px;
+  }
+
+  .gdgt-show-more-prices {
+    padding-top: 2px;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 12px;
+    color: #3399CC;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #3399CC;
+      color: #FFF;
+
+      small {
+        background-position: -41px -52px;
+      }
+    }
+
+    small {
+      display: inline-block;
+      width: 8px;
+      height: 4px;
+      margin-top: -1px;
+      margin-bottom: 0;
+      margin-left: 6px;
+      margin-right: 0;
+      background-color: transparent;
+      background-repeat: no-repeat;
+      background-image: url( "images/databox.png" );
+      background-position: -41px -48px;
+      vertical-align: middle;
+    }
+  }
+}

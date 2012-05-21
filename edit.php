@@ -36,18 +36,68 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 	public static $all_meta_keys = array( 'gdgt-disabled', 'gdgt-products-include', 'gdgt-products-exclude' );
 
 	/**
-	 * Queue up meta boxes for display in edit screens
+	 * Load product selector meta box on post edit screen load if no stop tags present
 	 *
 	 * @since 1.0
-	 * @todo Test if post has been created and post tags match stop tags
 	 */
 	public function __construct() {
+		add_action( 'load-post-new.php', array( &$this, 'load' ) );
+		add_action( 'load-post.php', array( &$this, 'maybe_load' ) );
+	}
+
+	/**
+	 * Attach actions when post loaded
+	 *
+	 * @since 1.3
+	 */
+	public function load() {
 		add_action( 'add_meta_boxes', array( &$this, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( &$this, 'process_saved_data' ) );
 		foreach ( array( 'post-new.php', 'post.php' ) as $page ) {
 			add_action( 'admin_print_scripts-' . $page, array( &$this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles-' . $page, array( &$this, 'enqueue_styles') );
+			add_action( 'admin_head-' . $page, array( &$this, 'add_help_tab' ) );
 		}
+	}
+
+	/**
+	 * Check if stop tags are present for a post before displaying a product selector metabox
+	 *
+	 * @since 1.3
+	 */
+	public function maybe_load() {
+		if ( isset( $_GET['post'] ) ) {
+			$post_id = absint( $_GET['post'] );
+			if ( $post_id ) {
+				if ( ! class_exists( 'GDGT_Databox' ) )
+					include_once( dirname( __FILE__ ) . '/databox.php' );
+				if ( GDGT_Databox::stop_tag_exists( $post_id ) )
+					return;
+			}
+		}
+		$this->load();
+	}
+
+	/**
+	 * Display help documentation in edit and add post screens
+	 * Hide help documentation if user has hidden the referenced metabox at the time of pageload
+	 *
+	 * @since 1.3
+	 */
+	public function add_help_tab() {
+		$screen = get_current_screen();
+		if ( ! method_exists( $screen, 'add_help_tab' ) )
+			return;
+		$hidden_post_boxes = maybe_unserialize( get_user_option( 'metaboxhidden_post' ) );
+		if ( ! empty( $hidden_post_boxes ) && is_array( $hidden_post_boxes ) && in_array( GDGT_Post_Meta_Box::BASE_ID, $hidden_post_boxes, true ) )
+			return;
+		unset( $hidden_post_boxes );
+		$max_products = absint( get_option( 'gdgt_max_products', 10 ) );
+		$screen->add_help_tab( array(
+			'id' => GDGT_Post_Meta_Box::BASE_ID . '-help',
+			'title' => GDGT_Post_Meta_Box::PLUGIN_NAME,
+			'content' => '<p>' . esc_html( sprintf( __( 'The %1$s builds a list of up to %2$u products by matching products based on your post tags or when you manually include a product in the post editor.', GDGT_Post_Meta_Box::PLUGIN_SLUG ), GDGT_Post_Meta_Box::PLUGIN_NAME, $max_products ) ) . '</p><p>' . esc_html( sprintf( __( 'You can manually add products by entering text into keyword search tool located at the bottom of the %s editor and selecting a product from the list of results. If your post is related to a specific product configuration or special edition you may wish to select that model from the list (e.g. tablet with mobile broadband vs. tablet with only Wi-Fi).', GDGT_Post_Meta_Box::PLUGIN_SLUG ), GDGT_Post_Meta_Box::PLUGIN_NAME ) ) . '</p><p>' . esc_html( sprintf( __( 'Products may also be manually excluded from automatic matching by manually adding that product to your %1$s list, then clicking the %2$s button.', GDGT_Post_Meta_Box::PLUGIN_SLUG ), __( 'Displayed', GDGT_Post_Meta_Box::PLUGIN_SLUG ), __( 'Delete', GDGT_Post_Meta_Box::PLUGIN_SLUG ) ) ) . '</p>'
+		) );
 	}
 
 	/**
@@ -70,6 +120,7 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 	 * Add gdgt meta box to edit post
 	 *
 	 * @since 1.0
+	 * @uses add_meta_box()
 	 */
 	public function add_meta_boxes() {
 		add_meta_box( GDGT_Post_Meta_Box::BASE_ID, GDGT_Post_Meta_Box::PLUGIN_NAME, array( &$this, 'product_selector' ), 'post', 'side' );
@@ -83,6 +134,11 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 	 * @param string hook name. scope the enqueue to just the admin pages we care about
 	 */
 	public function enqueue_scripts() {
+		// if jQuery not present load from Google CDN
+		wp_enqueue_script( 'jquery', is_ssl() ? 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', array(), null );
+		// handle case of no jQuery UI autocomplete in WordPress 3.2. load jQuery UI autocomplete 3.2.1 to match 3.2 version
+		wp_enqueue_script( 'jquery-ui-autocomplete', plugins_url( 'static/js/jquery/ui/jquery.ui.autocomplete.min.js', __FILE__ ), array( 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position' ), '1.8.12' );
+
 		$js_filename = 'gdgt-product-selector.js';
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true )
 			$js_filename = 'gdgt-product-selector.dev.js';
@@ -115,8 +171,6 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 			$post_id = absint( $post->ID );
 		else
 			$post_id = 0;
-
-
 
 		// it's possible the module is disabled, triggering a read-only mode
 		$readonly = false;
@@ -338,6 +392,7 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 	/**
 	 * Create a Tag URI based on the site URL, blog ID, and post ID
 	 *
+	 * @since 1.0
 	 * @link http://tools.ietf.org/html/rfc4151 RFC 4151 - Tag URI
 	 * @return string Tag URI
 	 */
@@ -357,6 +412,7 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 	/**
 	 * Build up a post data array for use in the gdgt API product/module call
 	 *
+	 * @since 1.0
 	 * @return array post data
 	 */
 	private function product_module_individual_post_data() {
@@ -398,6 +454,8 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 
 	/**
 	 * Send full post data to gdgt API
+	 *
+	 * @since 1.0
 	 */
 	private function ping_gdgt() {
 		global $post;
@@ -456,8 +514,6 @@ class GDGT_Post_Meta_Box extends GDGT_Base {
 		/* Is the post box hidden?
 		 * A bit tricky since we might want to populate data so it's visible and not disabled when they remove the post box from their hidden list
 		 * If we are able to detect the box was never shown then stop processing. Especially if we were thinking about processing tags separately.
-		 *
-		 * @todo: anything special for closed state?
 		 */
 		$hidden_post_boxes = maybe_unserialize( get_user_option( 'metaboxhidden_post' ) );
 		if ( ! empty( $hidden_post_boxes ) && is_array( $hidden_post_boxes ) && in_array( GDGT_Post_Meta_Box::BASE_ID, $hidden_post_boxes, true ) ) {
