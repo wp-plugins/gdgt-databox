@@ -8,14 +8,6 @@
  */
 class GDGT_Google_Analytics {
 	/**
-	 * Base URL for Google Analytics tracker
-	 *
-	 * @since 1.1
-	 * @var string
-	 */
-	const beacon_url = 'http://www.google-analytics.com/__utm.gif';
-
-	/**
 	 * Create a unique instance for a given Google Analytics account identifier
 	 *
 	 * @since 1.1
@@ -39,6 +31,16 @@ class GDGT_Google_Analytics {
 			return $id . ': ' . $this->account;
 		else
 			return $id;
+	}
+
+	/**
+	 * Build a URL for the Google Analytics beacon GIF. Vary scheme based on parent.
+	 *
+	 * @since 1.3
+	 * @return string
+	 */
+	public static function beacon_url( array $params ) {
+		return ( is_ssl() ? 'https' : 'http' ) . '://www.google-analytics.com/__utm.gif?' . http_build_query( $params, '', '&' );
 	}
 
 	/**
@@ -139,7 +141,7 @@ class GDGT_Google_Analytics {
 		if ( isset( $this->page_title ) )
 			$params['utmdt'] = $this->page_title;
 
-		return GDGT_Google_Analytics::beacon_url . '?' . http_build_query( $params, '', '&' );
+		return GDGT_Google_Analytics::beacon_url( $params );
 	}
 }
 ?>

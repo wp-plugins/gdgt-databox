@@ -1,7 +1,7 @@
 var gdgt = gdgt || {};
 gdgt.databox = {
 	// Plugin/JS version
-	version: "1.2",
+	version: "1.3",
 
 	// override me with translated strings
 	labels: { collapse: "collapse", expand: "expand", show_more_prices: "show <strong></strong> more prices", show_more_prices_singular: "show <strong></strong> more price" },
@@ -159,6 +159,55 @@ gdgt.databox = {
 		product.removeAttr( "aria-expanded" );
 	},
 
+	product_navigation: function() {
+		var hash = window.location.hash;
+		if ( typeof hash !== "string" || hash.length === 0 ) {
+			return;
+		}
+		if ( hash.charAt(0) === "#" ) {
+			if ( hash.length === 1 ) {
+				return;
+			}
+			hash = hash.substr( 1 );
+		}
+
+		jQuery.each( hash.split( "&" ), function( index, param ) {
+			// product nav through key only. product + tab through key-value
+			param = param.split( "=" );
+			if ( typeof param === "string" ) {
+				var key = jQuery.trim( decodeURIComponent( param ) );
+			} else if ( jQuery.isArray( param ) ) {
+				var key = jQuery.trim( decodeURIComponent( param[0] ) );
+			} else {
+				// continue
+				return;
+			}
+
+			// we only care about gdgt products
+			if ( key.length > 13 && key.substring( 0, 13 ) === "gdgt-product-" ) {
+				var product = jQuery( "#gdgt-wrapper" ).find( "." + key );
+				if ( product.length > 0 && product.is( ":visible" ) ) {
+					// expand if collapsed
+					if ( product.hasClass( "collapsed" ) ) {
+						product.find( ".gdgt-product-collapsed-name" ).trigger( "click" );
+					}
+					var product_offset = product.offset();
+					jQuery( document ).scrollTop( product_offset.top );
+
+					// check for tab-specific nav
+					if ( jQuery.isArray( param ) && param.length === 2 && jQuery.inArray( param[1], ["specs", "reviews", "prices"] ) ) {
+						var tab = product.find( ".gdgt-tabs ." + param[1] );
+						if ( tab.length > 0 && tab.is( ":visible" ) && ! tab.hasClass( "disabled" ) ) {
+							tab.trigger( "click" );
+						}
+					}
+					// break the loop
+					return false;
+				}
+			}
+		} );
+	},
+
 	// I love the way you turn me on
 	enable: function() {
 		var databoxes = jQuery( "#gdgt-wrapper" );
@@ -202,6 +251,7 @@ gdgt.databox = {
 			product.find( ".gdgt-branding" ).html( jQuery( '<span class="gdgt-product-collapse-icon" />' ).attr( "title", gdgt.databox.labels.collapse ).click( gdgt.databox.product_collapse ) );
 		} );
 		gdgt.databox.analytics.init();
+		gdgt.databox.product_navigation();
 	},
 
 	analytics: {

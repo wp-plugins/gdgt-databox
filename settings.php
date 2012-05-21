@@ -85,9 +85,6 @@ class GDGT_Settings extends GDGT_Base {
 		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_feed_include', array( &$this, 'sanitize_feed_include' ) );
 		add_settings_field( 'gdgt_feed_include', __( 'Web feeds', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_feed_include' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
 		add_settings_field( 'gdgt_max_products', __( 'Maximum products', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_max_products' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
-		//register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_module_nav_style', array( &$this, 'sanitize_module_nav_style' ) );
-		//add_settings_field( 'gdgt_module_nav_style', __( 'Module navigation style', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_module_nav_style' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
-		//add_action( 'update_option_gdgt_module_nav_style', array( &$this, 'update_option_module_nav_style' ), 10, 2 );
 		if ( absint( get_option( 'gdgt_max_products', 10 ) ) > 1 ) {
 			register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_expand_products', array( &$this, 'sanitize_expand_products' ) );
 			add_settings_field( 'gdgt_expand_products', __( 'Auto-expand', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_expand_products' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_product_list' );
@@ -104,8 +101,6 @@ class GDGT_Settings extends GDGT_Base {
 		add_settings_field( 'gdgt_min_disable_capability', __( 'Disable capability', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_min_disable_capability' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_restrictions' );
 		register_setting( GDGT_Settings::PLUGIN_SLUG, 'gdgt_stop_tags', array( &$this, 'sanitize_stop_tags' ) );
 		add_settings_field( 'gdgt_stop_tags', __( 'Stop-tags', GDGT_Settings::PLUGIN_SLUG ), array( &$this, 'display_stop_tags' ), GDGT_Settings::PLUGIN_SLUG, 'gdgt_restrictions' );
-		//add_action( 'update_option_gdgt_stop_tags', array( &$this, 'stop_tags_update' ), 10, 2 );
-		//add_action( 'add_option_gdgt_stop_tags', array( &$this, 'stop_tags_update' ), 10, 2 );
 	}
 
 	/**

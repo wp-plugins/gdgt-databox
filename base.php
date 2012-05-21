@@ -1,5 +1,6 @@
 <?php
 
+// did someone access this file outside of WordPress? try loading WordPress
 if ( ! function_exists('get_bloginfo') )
 	require_once dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) . '/wp-load.php';
 
@@ -18,7 +19,7 @@ class GDGT_Base {
 	 * @since 1.0
 	 * @var string
 	 */
-	const PLUGIN_VERSION = '1.23';
+	const PLUGIN_VERSION = '1.3';
 
 	/**
 	 * Plugin slug used to differentiate this plugin and its message bundles, options, etc. from other WordPress plugins
@@ -30,6 +31,9 @@ class GDGT_Base {
 
 	/**
 	 * Name of the plugin and its main object(s)
+	 *
+	 * @since 1.0
+	 * @var string
 	 */
 	const PLUGIN_NAME = 'gdgt Databox';
 

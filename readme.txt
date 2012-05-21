@@ -2,7 +2,7 @@
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2.1
 Tested up to: 3.4
-Stable tag: 1.23
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: gdgt, gadgets, consumer electronics, reviews
@@ -81,6 +81,13 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.3 =
+
+* Load JS and CSS only when Databox available for a given post
+* Navigate to a specific product or tab within a Databox from feed view
+* Do not display product selector on post edit screens when post contains one or more stop tags
+* Support Google Analytics noscript image beacons on HTTPS pages
+
 = 1.23 =
 
 * Bundle jQuery UI autocomplete for WordPress 3.2 installations
@@ -134,9 +141,13 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Upgrade Notice ==
 
+= 1.3 =
+
+Faster load times. Clicks from feed view open specific products and tabs inside your post
+
 = 1.23 =
 
-WordPress 3.2 compatibility improvements. Contextual help. Display company name in collapsed product view.
+WordPress 3.2 compatibility improvements. Contextual help. Display company name in collapsed product view
 
 = 1.22 =
 
@@ -148,7 +159,7 @@ Improve caching for dynamic theme switchers
 
 = 1.2 =
 
-All new design. New price comparison tab. Fluid layout auto-resizes Databox to content_width. Product search fixes.
+All new design. New price comparison tab. Fluid layout auto-resizes Databox to content_width. Product search fixes
 
 = 1.11 =
 
@@ -160,7 +171,7 @@ Databox appears in feed view. Set custom filter priority
 
 = 1.03 =
 
-Additional CSS rules to maintain expected layout across a variety of themes.
+Additional CSS rules to maintain expected layout across a variety of themes
 
 = 1.02 =
 

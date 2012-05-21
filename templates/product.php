@@ -395,8 +395,42 @@ class GDGT_Databox_Product {
 	 * @return string HTML markup of an inline, standalone Databox product
 	 */
 	public function render_inline() {
+		/*
+		 * Link to the product and optional tab within the post so the partner may capture the visit and potential revenue
+		 * If no product ID present in API response include a URL fragment equal to the gdgt Databox wrapper ID to take advantage of default browser behaviors for internal page links.
+		 * Do not alter the URL fragment if a fragment already exists as this may break existing behaviors such as default internal page links.
+		 *
+		 * @todo expand use of URL fragments more comfortable with non-interference
+		 */
+		$post_product_url = esc_url( apply_filters( 'the_permalink_rss', get_permalink() ) );
+		$post_product_url_has_fragment = false;
+		if ( $post_product_url ) {
+			try { // catch malformed URL errors in PHP < 5.3.3
+				$fragment = parse_url( $post_product_url, PHP_URL_FRAGMENT );
+				// only add if we are the only fragment
+				if ( empty( $fragment ) ) {
+					$post_product_url .= '#';
+					if ( isset( $this->id ) ) {
+						$post_product_url .= rawurlencode( sanitize_html_class( 'gdgt-product-' . $this->id ) );
+						$post_product_url_has_fragment = true;
+					} else {
+						$post_product_url .= 'gdgt-wrapper';
+					}
+				}
+				unset( $fragment );
+			} catch ( Exception $e ) {
+				$post_product_url = ''; // invalid URL. override
+			}
+		}
+
 		if ( $this->collapsed === true ) {
-			return '<li style="height:39px; padding-top:0; padding-bottom: 0; padding-left:15px; padding-right:15px; margin:0; border-top-width:0; border-bottom-width:1px; border-right-width:0; border-left-width:0; border-style:solid; border-color: #CCC; background-color:#ededed"><a href="' . esc_url( $this->url, array( 'http', 'https' ) ) . '" style="padding:0; margin:0; font-size:18px; color:#333; line-height:40px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:inherit; text-decoration:none; border-bottom-width:0">' . esc_html( $this->company->name ) . ' <strong style="font-weight:bold">' . esc_html( $this->name ) . '</strong></a></li>';
+			$html = '<li style="height:39px; padding-top:0; padding-bottom: 0; padding-left:15px; padding-right:15px; margin:0; border-top-width:0; border-bottom-width:1px; border-right-width:0; border-left-width:0; border-style:solid; border-color: #CCC; background-color:#ededed"><a href="';
+			if ( $post_product_url )
+				$html .= $post_product_url;
+			else
+				$html .= esc_url( $this->url, array( 'http', 'https' ) );
+			$html .= '" style="padding:0; margin:0; font-size:18px; color:#333; line-height:40px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:inherit; text-decoration:none; border-bottom-width:0">' . esc_html( $this->company->name ) . ' <strong style="font-weight:bold">' . esc_html( $this->name ) . '</strong></a></li>';
+			return $html;
 		}
 
 		// product
@@ -440,27 +474,12 @@ class GDGT_Databox_Product {
 		// branding
 		$html .= '<div style="float:right; width:66px; padding-top:2px; padding-bottom:0; padding-left:0; padding-right:0; margin:0; text-align:right"><p style="padding:0; margin:0; text-align:right; overflow:hidden"><a href="http://gdgt.com/" style="color:#666; font-size:10px; display:block; padding:0; margin-top:0; margin-bottom:0; margin-left:10px; margin-right:0; text-align:left; vertical-align:middle; text-decoration:none; border-bottom-width:0">' . _x( 'powered by', 'site credits', 'gdgt_databox' ) . ' <img alt="gdgt logo" src="' . esc_url( plugins_url( '/static/css/images/gdgt-logo.png', dirname( __FILE__ ) ), array( 'http', 'https' ) ) . '" width="49" height="23" style="vertical-align:middle; border:0" /></a></p></div>';
 
-		/*
-		 * Use a single Databox URL for all tabs and lowest price link
-		 * Include a URL fragment equal to the gdgt Databox wrapper ID to take advantage of default browser behaviors for internal page links.
-		 * Do not alter the URL fragment if a fragment already exists as this would create a new internal link mapping and possibly break existing behaviors
-		 */
-		$databox_url = esc_url( apply_filters( 'the_permalink_rss', get_permalink() ) );
-		if ( $databox_url ) {
-			try { // catch malformed URL errors in PHP < 5.3.3
-				$fragment = parse_url( $databox_url, PHP_URL_FRAGMENT );
-				if ( empty( $fragment ) )
-					$databox_url .= '#gdgt-wrapper';
-				unset( $fragment );
-			} catch ( Exception $e ) {
-				$databox_url = ''; // invalid URL. override
-			}
-		}
-
 		// product-price
 		if ( isset( $this->price ) ) {
-			$price_url = $databox_url;
-			if ( ! $price_url && array_key_exists( 'prices', $this->tabs ) ) {
+			$price_url = $post_product_url;
+			if ( $post_product_url_has_fragment ) {
+				$price_url .= '=prices';
+			} else if ( ! $price_url && array_key_exists( 'prices', $this->tabs ) ) {
 				$price_data = $this->tabs['prices'];
 				if ( isset( $price_data->url ) )
 					$price_url = esc_url( $price_data->url, array( 'http', 'https' ) );
@@ -468,7 +487,7 @@ class GDGT_Databox_Product {
 			}
 			$html .= '<div style="float:right; width:29%; height:48px; padding-top:2px; padding-bottom:0; padding-left:0; padding-right:8px; margin-top:0; margin-bottom:0; margin-left:0; text-align:right; text-transform:uppercase; border-right-width:1px; border-right-style:solid; border-right-color:#ddd">';
 			if ( $price_url )
-				$html .= '<a href="' . $databox_url . '" style="cursor:pointer; text-decoration:none; border-bottom-width:0">';
+				$html .= '<a href="' . $price_url . '" style="cursor:pointer; text-decoration:none; border-bottom-width:0">';
 			$html .= '<span style="display:inline-block; width:46px; margin-top:7px; margin-bottom:0; margin-left:0; margin-right:2px; color:#666; line-height:16px; text-align:right; vertical-align:top">' . esc_html( __( 'Buy from', 'gdgt-databox' ) ) . '</span>';
 			$html .= '<span style="padding-top:0; padding-bottom:0; padding-left:3px; padding-right:3px; font-size:45px; color:#3399CC; line-height:45px">';
 			if ( array_key_exists( $this->price->currency, $this->currency_symbols ) )
@@ -543,8 +562,10 @@ class GDGT_Databox_Product {
 					$item_style_rules['cursor'] = 'default';
 				} else {
 					// use one URL for all tabs for now: link to gdgt Databox on permalink or fall back to gdgt.com tab link
-					$url = $databox_url;
-					if ( ! $url && isset( $tab_data->url ) )
+					$url = $post_product_url;
+					if ( $post_product_url_has_fragment )
+						$url .= '=' . ltrim( substr( $key, strpos( $key, '_' ) ), '_' );
+					else if ( ! $url && isset( $tab_data->url ) )
 						$url = esc_url( $tab_data->url, array( 'http', 'https' ) );
 					if ( $url )
 						$item_inner .= '<a href="' . $url . '" title="' . esc_attr( $this->full_name . ' ' . strip_tags( $label ) ) . '" style="text-decoration:none; border-bottom-width:0; color:inherit">';
@@ -569,7 +590,8 @@ class GDGT_Databox_Product {
 				$position++;
 			}
 			unset( $position );
-			unset( $databox_url );
+			unset( $post_product_url_has_fragment );
+			unset( $post_product_url );
 			$html .= '</ul>';
 
 			// tab content

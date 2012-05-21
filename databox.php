@@ -6,8 +6,45 @@
  * @since 1.0
  */
 class GDGT_Databox {
+
+	/**
+	 * HTML placeholder used when priority < 10
+	 *
+	 * @since 1.2
+	 * @var string
+	 */
 	const placeholder = '<div id="gdgt-placeholder"></div>';
+
+	/**
+	 * Track the total number of placeholders in the current view
+	 *
+	 * @since 1.2
+	 * @var int
+	 */	
 	public static $placeholder_count = 1;
+
+	/**
+	 * Track if Databox JavaScript files have been loaded for the current page
+	 *
+	 * @since 1.3
+	 * @var bool
+	 */
+	public $js_loaded = false;
+
+	/**
+	 * Track if Databox CSS files have been loaded for the current page
+	 *
+	 * @since 1.3
+	 * @var bool
+	 */
+	public $css_loaded = false;
+
+	/**
+	 * Google Analytics account + site identifier
+	 *
+	 * @since 1.2
+	 * @var string
+	 */
 	const google_analytics_id = 'UA-818999-9';
 
 	/**
@@ -63,7 +100,7 @@ class GDGT_Databox {
 				add_filter( 'the_content_feed', array( &$this, 'after_content' ), $this->content_priority );
 			}
 		} else {
-			add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+			add_action( 'wp_enqueue_scripts', array( &$this, 'maybe_enqueue_scripts' ) );
 			// possibly output content at the end of the post
 			if ( $this->content_priority < 10 ) {
 				add_filter( 'the_content', array( &$this, 'add_placeholder' ), $this->content_priority );
@@ -83,12 +120,12 @@ class GDGT_Databox {
 	 * @since 1.0
 	 * @return bool true if one or more post tags appear in the site's list of stop tags
 	 */
-	public static function stop_tag_exists() {
+	public static function stop_tag_exists( $post_id = 0 ) {
 		$stop_tags = explode( ',', get_option( 'gdgt_stop_tags', '' ) );
 		if ( empty( $stop_tags ) )
 			return false;
 
-		$post_tags = get_the_tags();
+		$post_tags = get_the_tags( absint( $post_id ) );
 		if ( empty( $post_tags ) || ! is_array( $post_tags ) )
 			return false;
 		foreach( $post_tags as $post_tag ) {
@@ -108,24 +145,72 @@ class GDGT_Databox {
 	 */
 	public static function databox_type() {
 		global $content_width;
+
 		if ( ! is_feed() && ( isset( $content_width ) && $content_width < 650 ) )
 			return 'mini';
 		return '';
 	}
 
 	/**
-	 * Load the gdgt Databox JavaScript and CSS with every post even if no databox is displayed
+	 * Load scripts and stylesheet if products_include specified, else wait to see if we get an API response first
+	 *
+	 * @since 1.3
+	 */
+	public function maybe_enqueue_scripts() {
+		global $post;
+
+		if ( ! is_single() || ! isset( $post->ID ) )
+			return;
+
+		// use products include as a strong signal the post will contain Databox content
+		$products_include = get_post_meta( $post->ID, 'gdgt-products-include', true );
+		if ( ! empty( $products_include ) ) {
+			$this->enqueue_styles();
+			$this->enqueue_scripts();
+		}
+	}
+
+	/**
+	 * Load Databox CSS in page head
+	 *
+	 * @since 1.3
+	 * @uses wp_enqueue_style()
+	 */
+	public function enqueue_styles() {
+		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.3' );
+		$this->css_loaded = true;
+	}
+
+	/**
+	 * Load the gdgt Databox JavaScript
 	 *
 	 * @since 1.0
-	 * @todo only include if post generates a databox
+	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.2' );
+		// no need to load twice
+		if ( $this->js_loaded === true )
+			return false;
+
+		wp_enqueue_script( 'jquery', is_ssl() ? 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', array(), null, true );
+
 		$js_filename = 'gdgt-databox.js';
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG === true )
 			$js_filename = 'gdgt-databox.dev.js';
-		wp_enqueue_script( 'jquery', is_ssl() ? 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' : 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', array(), null );
-		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.2' );
+		wp_enqueue_script( 'gdgt-databox', plugins_url( 'static/js/' . $js_filename, __FILE__ ), array( 'jquery' ), '1.3', true );
+		$this->js_loaded = true;
+		return true;
+	}
+
+	/**
+	 * Print the gdgt Databox JavaScript if not already enqueued
+	 *
+	 * @since 1.3
+	 * @uses wp_print_scripts()
+	 */
+	public function print_scripts() {
+		if ( $this->enqueue_scripts() === true )
+			wp_print_scripts( 'gdgt-databox' );
 	}
 
 	/**
@@ -314,7 +399,7 @@ class GDGT_Databox {
 	public static function cache_key( $post_id ) {
 		global $content_width;
 
-		$cache_key_parts = array( 'gdgt-databox', 'v1.23' );
+		$cache_key_parts = array( 'gdgt-databox', 'v1.3' );
 		if ( is_multisite() ) {
 			$blog_id = absint( get_current_blog_id() );
 			if ( $blog_id > 0 )
@@ -537,14 +622,23 @@ class GDGT_Databox {
 	 */
 	public function after_content( $content ) {
 		$databox = $this->databox_content();
-		if ( empty( $databox ) )
+		if ( empty( $databox ) ) {
 			$databox = '';
+		} else if ( ! is_feed() ) {
+			if ( ! $this->js_loaded )
+				add_action( 'wp_footer', array( &$this, 'print_scripts' ) );
+			if ( ! $this->css_loaded )
+				$databox = '<script type="text/javascript">(function(d){var id="gdgt-databox-css";if(d.getElementById(id)){return;}var css=d.createElement("link");css.id=id;css.rel="stylesheet";css.type="text/css";css.href=' . json_encode( plugins_url( 'static/css/databox.css', __FILE__ ) . '?ver=1.3' ) . ';var ref=d.getElementsByTagName("head")[0];ref.appendChild(css);}(document));</script>' . $databox;
+		}
 
 		// do we need to replace a placeholder?
 		if ( ! empty( $content ) && isset( $this->has_placeholder ) && $this->has_placeholder === true )
 			return str_replace( GDGT_Databox::placeholder, $databox, $content, GDGT_Databox::$placeholder_count );
 
-		return $content . GDGT_Databox::wrap_in_newlines( $databox );
+		if ( $databox )
+			return $content . GDGT_Databox::wrap_in_newlines( $databox );
+
+		return $content;
 	}
 
 	/**
