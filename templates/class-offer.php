@@ -49,6 +49,12 @@ class GDGT_Databox_Offer {
 			$this->availability = 'inStock';
 		else
 			$this->availability = 'outOfStock';
+
+		if ( isset( $data->is_on_contract ) && $data->is_on_contract === true )
+			$this->is_on_contract = true;
+		else
+			$this->is_on_contract = false;
+
 		$this->url = urldecode( $data->link );
 	}
 
@@ -103,9 +109,17 @@ class GDGT_Databox_Offer {
 		$html .= '<span class="gdgt-price-details"><a rel="nofollow" href="' . $link . '"' . $anchor_target;
 		if ( $schema_org === true )
 			$html .= ' itemprop="url"';
-		$html .= '>' . $this->currency_symbols[$this->currency];
-		$html .= number_format_i18n( $this->price, 2 );
-		$html .= '</a> <span class="gdgt-aside">' . esc_html( __( '+ tax & shipping', 'gdgt-databox' ) ) . '</span></span>';
+		$html .= '>';
+		if ( floor($this->price) == 0 ) {
+			$html .= 'FREE';
+		} else {
+			$html .= $this->currency_symbols[$this->currency];
+			$html .= number_format_i18n( $this->price, 2 );
+		}
+    if ( $this->is_on_contract === true )
+      $html .= '</a> <span class="gdgt-aside">' . esc_html( __( 'on contract', 'gdgt-databox' ) ) . '</span></span>';
+    else
+      $html .= '</a> <span class="gdgt-aside">' . esc_html( __( '+ tax & shipping', 'gdgt-databox' ) ) . '</span></span>';
 
 		// get some
 		$html .= '<span><a rel="nofollow" href="' . $link . '"' . $anchor_target . ' class="gdgt-button gdgt-' . esc_attr( strtolower( $this->availability ) );

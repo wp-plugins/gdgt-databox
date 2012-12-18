@@ -177,7 +177,7 @@ class GDGT_Databox {
 	 * @uses wp_enqueue_style()
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.3' );
+		wp_enqueue_style( 'gdgt-databox', plugins_url( 'static/css/databox.css', __FILE__ ), array(), '1.31' );
 		$this->css_loaded = true;
 	}
 
@@ -628,7 +628,7 @@ class GDGT_Databox {
 			if ( ! $this->js_loaded )
 				add_action( 'wp_footer', array( &$this, 'print_scripts' ) );
 			if ( ! $this->css_loaded )
-				$databox = '<script type="text/javascript">(function(d){var id="gdgt-databox-css";if(d.getElementById(id)){return;}var css=d.createElement("link");css.id=id;css.rel="stylesheet";css.type="text/css";css.href=' . json_encode( plugins_url( 'static/css/databox.css', __FILE__ ) . '?ver=1.3' ) . ';var ref=d.getElementsByTagName("head")[0];ref.appendChild(css);}(document));</script>' . $databox;
+				$databox = '<script type="text/javascript">(function(d){var id="gdgt-databox-css";if(d.getElementById(id)){return;}var css=d.createElement("link");css.id=id;css.rel="stylesheet";css.type="text/css";css.href=' . json_encode( plugins_url( 'static/css/databox.css', __FILE__ ) . '?ver=1.31' ) . ';var ref=d.getElementsByTagName("head")[0];ref.appendChild(css);}(document));</script>' . $databox;
 		}
 
 		// do we need to replace a placeholder?

@@ -105,7 +105,13 @@ gdgt.product_selector = {
 					var li = jQuery(this);
 
 					// pull in stored data for the result for comparison
-					var search_result_data = li.data( "item.autocomplete" );
+					var search_result_data = li.data( "uiAutocompleteItem" );
+
+					// backwards compatibility for before jQuery UI 1.9.2
+					if (typeof search_result_data === 'undefined') {
+						var search_result_data = li.data( "item.autocomplete" );
+					}
+
 					var label = jQuery.trim( search_result_data.label );
 					if ( label === gdgt.product_selector.labels.invalid_key ) {
 						li.addClass( "gdgt-error-invalid-key" );
