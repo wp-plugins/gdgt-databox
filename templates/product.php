@@ -105,15 +105,19 @@ class GDGT_Databox_Product {
 
 				if ( isset( $product->lowest_price ) && isset( $product->lowest_price->amount ) && isset( $product->lowest_price->currency ) ) {
 					$price = new stdClass();
-					$lowest_price = 0;
+					$lowest_price = null;
 					try {
 						$lowest_price = absint( $product->lowest_price->amount );
 					} catch ( Exception $e ) {}
 			
-					if ( $lowest_price > 0 ) { // nothing in life is free!
+					if ( is_numeric( $lowest_price ) ) {
 						$price->amount = $lowest_price;
 						if ( is_string( $product->lowest_price->currency ) && array_key_exists( $product->lowest_price->currency, $this->currency_symbols ) ) {
 							$price->currency = $product->lowest_price->currency;
+							if ( isset( $product->lowest_price->is_on_contract ) && $product->lowest_price->is_on_contract === true )
+								$price->is_on_contract = true;
+							else
+								$price->is_on_contract = false;
 							$this->price = $price;
 						}
 					}
@@ -322,19 +326,30 @@ class GDGT_Databox_Product {
 				$html .= ' itemprop="offers" itemscope itemtype="http://schema.org/AggregateOffer"><link itemprop="itemCondition" href="http://schema.org/NewCondition" /><meta itemprop="priceCurrency" content="' . $this->price->currency . '" />';
 			else
 				$html .= '>';
-			$html .= '<span class="gdgt-price-label">' . esc_html( __( 'Buy from', 'gdgt-databox' ) ) . '</span>';
+			$html .= '<span class="gdgt-price-label">';
+			if ( $this->price->amount === 0 )
+				$html .= esc_html( __( 'Get it for', 'gdgt-databox' ) );
+			else
+				$html .= esc_html( __( 'Buy from', 'gdgt-databox' ) );
+			$html .= '</span>';
 			$html .= '<span class="gdgt-price"';
 			if ( $schema_org )
 				$html .= ' itemprop="url">';
 			else
 				$html .= '>';
-			if ( array_key_exists( $this->price->currency, $this->currency_symbols ) )
-				$html .= $this->currency_symbols[$this->price->currency];
-			if ( $schema_org )
-				$html .= '<span itemprop="price lowPrice">' . $this->price->amount . '</span>';
-			else
-				$html .= $this->price->amount;
+			if ( $this->price->amount === 0 ) {
+				$html .= 'FREE';
+			} else {
+				if ( array_key_exists( $this->price->currency, $this->currency_symbols ) )
+					$html .= $this->currency_symbols[$this->price->currency];
+				if ( $schema_org )
+					$html .= '<span itemprop="price lowPrice">' . $this->price->amount . '</span>';
+				else
+					$html .= $this->price->amount;
+			}
 			$html .= '</span>';
+			if ( $this->price->is_on_contract )
+				$html .= '<span class="gdgt-price-asterisk">*</span>';
 			$html .= '</div>';
 		}
 		$html .= '<div class="gdgt-branding"><p>' . esc_html( _x( 'powered by', 'site credits', 'gdgt-databox' ) ) . '<a role="img" aria-label="gdgt logo" href="http://gdgt.com/" class="gdgt-logo"' . $anchor_target . '>gdgt</a></p></div></div>'; // gdgt-product-name, gdgt-branding, gdgt-product-head

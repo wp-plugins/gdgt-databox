@@ -1,8 +1,8 @@
 === gdgt Databox ===
 Contributors: gdgt, niallkennedy
 Requires at least: 3.2.1
-Tested up to: 3.4
-Stable tag: 1.3
+Tested up to: 3.5
+Stable tag: 1.31
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: gdgt, gadgets, consumer electronics, reviews
@@ -81,6 +81,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 
 == Changelog ==
 
+= 1.31 =
+
+* Add support for on-contract cellphone offers.
+
 = 1.3 =
 
 * Load JS and CSS only when Databox available for a given post
@@ -140,6 +144,10 @@ The gdgt Databox plugin includes [WAI-ARIA](http://www.w3.org/WAI/intro/aria) ma
 * Initial release. Display specifications, reviews and ratings, discussions, and answers related to a post
 
 == Upgrade Notice ==
+
+= 1.31 =
+
+On contract cellphone offers are now supported.
 
 = 1.3 =
 

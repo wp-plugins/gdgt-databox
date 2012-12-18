@@ -2,23 +2,29 @@
 # This file is distributed under the same license as the  package.
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/gdgt-databox\n"
-"POT-Creation-Date: 2012-05-21 23:32:13+00:00\n"
+"POT-Creation-Date: 2012-12-17 16:54-0800\n"
+"PO-Revision-Date: 2012-12-17 16:54-0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2012-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #: edit.php:99
+#, php-format
 msgid ""
 "The %1$s builds a list of up to %2$u products by matching products based on "
 "your post tags or when you manually include a product in the post editor."
 msgstr ""
 
 #: edit.php:99
+#, php-format
 msgid ""
 "You can manually add products by entering text into keyword search tool "
 "located at the bottom of the %s editor and selecting a product from the list "
@@ -28,6 +34,7 @@ msgid ""
 msgstr ""
 
 #: edit.php:99
+#, php-format
 msgid ""
 "Products may also be manually excluded from automatic matching by manually "
 "adding that product to your %1$s list, then clicking the %2$s button."
@@ -78,6 +85,7 @@ msgid "Unknown"
 msgstr ""
 
 #: filter-info.php:118
+#, php-format
 msgid ""
 "We found other active plugins that may change your existing post content in-"
 "place or add content to the end of your post alongside the %s."
@@ -124,6 +132,7 @@ msgid "Product display settings"
 msgstr ""
 
 #: settings.php:79
+#, php-format
 msgid "Automatically display new tabs as %s releases them."
 msgstr ""
 
@@ -196,6 +205,7 @@ msgid "gdgt API key needed"
 msgstr ""
 
 #: settings.php:162
+#, php-format
 msgid "Please <a href=\"%s\">enter a valid API key</a> to begin using the %s."
 msgstr ""
 
@@ -212,10 +222,12 @@ msgid "Manage your API key"
 msgstr ""
 
 #: settings.php:207
+#, php-format
 msgid "%s help"
 msgstr ""
 
 #: settings.php:212
+#, php-format
 msgid ""
 "A %1$s API key uniquely identifies your account and its content to %1$s "
 "servers. An API key is required to enable %2$s functionality beyond basic "
@@ -227,6 +239,7 @@ msgid "Product display"
 msgstr ""
 
 #: settings.php:217
+#, php-format
 msgid ""
 "Future versions of %1$s may introduce new optional tabs. These tabs will be "
 "included in %1$s output by default. If you wish to manually control any new "
@@ -238,6 +251,7 @@ msgid "Databox display"
 msgstr ""
 
 #: settings.php:222
+#, php-format
 msgid ""
 "The %1$s honors the %2$s <a href=\"%3$s\" title=\"WordPress themes required "
 "hooks and navigation\">required</a> global variable set by themes to "
@@ -246,6 +260,7 @@ msgid ""
 msgstr ""
 
 #: settings.php:222
+#, php-format
 msgid ""
 "A special version of the %1$s suitable for display in Google Reader (and "
 "other feed readers) appears in your site's RSS 2.0 and/or Atom Syndication "
@@ -263,6 +278,7 @@ msgid ""
 msgstr ""
 
 #: settings.php:222
+#, php-format
 msgid ""
 "%1$s markup adds semantic meaning to %2$s content, helping indexers (such as "
 "%3$s) identify products and their reviews, pricing, and other structured "
@@ -273,15 +289,11 @@ msgid ""
 msgstr ""
 
 #: settings.php:222
-msgctxt "additional context summaries"
-msgid "rich snippets"
-msgstr ""
-
-#: settings.php:222
 msgid "HTML5 microdata"
 msgstr ""
 
 #: settings.php:222
+#, php-format
 msgid ""
 "If you happen to have multiple plugins acting on the same WordPress content "
 "filters used to display plugin content (such as sharing buttons, related "
@@ -294,6 +306,7 @@ msgid "Restrictions"
 msgstr ""
 
 #: settings.php:227
+#, php-format
 msgid ""
 "The %s may be disabled on individual posts by a WordPress user with "
 "sufficient permissions, or across all posts containing any of the specified "
@@ -301,12 +314,14 @@ msgid ""
 msgstr ""
 
 #: settings.php:227
+#, php-format
 msgid ""
 "Sites with editorial workflows that rely on specific user roles and "
 "capabilities may also want to limit the ability to disable the %s."
 msgstr ""
 
 #: settings.php:257
+#, php-format
 msgid "%s Settings"
 msgstr ""
 
@@ -315,6 +330,7 @@ msgid "Save Changes"
 msgstr ""
 
 #: settings.php:270
+#, php-format
 msgid "Your secret %s API key is required to enable Databox access."
 msgstr ""
 
@@ -343,11 +359,13 @@ msgid "API key updated!"
 msgstr ""
 
 #: settings.php:363
+#, php-format
 msgid ""
 "Invalid API key entered. Please check your documentation and/or contact %s."
 msgstr ""
 
 #: settings.php:388
+#, php-format
 msgid "The minimum capability needed to disable the %s on a single post."
 msgstr ""
 
@@ -356,10 +374,12 @@ msgid "Further details on WordPress roles and capabilities"
 msgstr ""
 
 #: settings.php:409
+#, php-format
 msgid "Permissions changed: only users with %s capability may disable the %s."
 msgstr ""
 
 #: settings.php:427
+#, php-format
 msgid ""
 "Posts containing any of the specified stop-tags will not display the %s."
 msgstr ""
@@ -373,10 +393,12 @@ msgid "Add"
 msgstr ""
 
 #: settings.php:467
+#, php-format
 msgid "%s now enabled for any post tagged \"%s.\""
 msgstr ""
 
 #: settings.php:474
+#, php-format
 msgid "%s now disabled for any post tagged \"%s.\""
 msgstr ""
 
@@ -397,27 +419,27 @@ msgid "defined by theme"
 msgstr ""
 
 #: settings.php:529
+#, php-format
 msgid "Databox not displayed. Minimum width of %d pixels required."
 msgstr ""
 
 #: settings.php:540
+#, php-format
 msgid "Displaying %1$s Databox: %2$u horizontal pixels fluid to %3$u."
 msgstr ""
 
-#: settings.php:542
-msgctxt "more information"
-msgid "more info"
-msgstr ""
-
 #: settings.php:556
+#, php-format
 msgid "Include %s after RSS or Atom feed full content"
 msgstr ""
 
 #: settings.php:571
+#, php-format
 msgid "The %s will appear in feeds after full post content."
 msgstr ""
 
 #: settings.php:574
+#, php-format
 msgid "The %s will no longer appear in feeds."
 msgstr ""
 
@@ -426,6 +448,7 @@ msgid "Maximum number of products per Databox"
 msgstr ""
 
 #: settings.php:615
+#, php-format
 msgid "The %s will display a maximum of %d %s."
 msgstr ""
 
@@ -442,54 +465,46 @@ msgid "Expand all products on initial page load"
 msgstr ""
 
 #: settings.php:644
+#, php-format
 msgid ""
 "Include %s attributes in the Databox to express semantic meaning. "
 "(Recommended.)"
 msgstr ""
 
 #: settings.php:661
+#, php-format
 msgid ""
 "The %s will now include Schema.org microdata for improved semantic meaning."
 msgstr ""
 
 #: settings.php:663
+#, php-format
 msgid "The %s will not include Schema.org microdata."
 msgstr ""
 
 #: settings.php:684
+#, php-format
 msgid ""
 "Other plugins may also add content alongside the %s at the end of your posts."
 msgstr ""
 
 #: settings.php:684
+#, php-format
 msgid ""
 "Enter a priority value between %1$d and %2$d to reorder where the %3$s "
 "appears."
 msgstr ""
 
 #: settings.php:685
-msgctxt "take notice"
-msgid "Note:"
-msgstr ""
-
-#: settings.php:685
+#, php-format
 msgid ""
 "the lower the number, the earlier its execution, meaning it will appear "
 "higher up the page. A priority of %1$d will show the %3$s above another "
 "plugin acting on the same content filter with a priority of %2$d."
 msgstr ""
 
-#: settings.php:711
-msgctxt "positive numeric change: 1 to 2"
-msgid "increased"
-msgstr ""
-
-#: settings.php:713
-msgctxt "negative numeric change: 2 to 1"
-msgid "decreased"
-msgstr ""
-
 #: settings.php:714
+#, php-format
 msgid "Content filter priority %1$s from %2$u to %3$u."
 msgstr ""
 
@@ -505,64 +520,55 @@ msgid ""
 msgstr ""
 
 #: settings.php:861
+#, php-format
 msgid "Future versions of the %s will automatically include new tab options."
 msgstr ""
 
 #: settings.php:863
+#, php-format
 msgid ""
 "Auto-update of available tabs disabled. You will need to manually enable new "
 "tabs as they become available in future versions of the %s plugin."
 msgstr ""
 
-#: templates/class-offer.php:84 templates/class-offer.php:145
+#: templates/class-offer.php:90 templates/class-offer.php:159
 msgid "featured seller"
 msgstr ""
 
-#: templates/class-offer.php:108 templates/class-offer.php:160
+#: templates/class-offer.php:120
+msgid "on contract"
+msgstr ""
+
+#: templates/class-offer.php:122 templates/class-offer.php:174
 msgid "+ tax & shipping"
 msgstr ""
 
-#: templates/class-offer.php:113 templates/class-offer.php:207
-msgctxt "purchase this item immediately"
-msgid "buy now"
-msgstr ""
-
-#: templates/class-offer.php:115 templates/class-offer.php:209
-msgctxt "not one of this item is currently available"
-msgid "out of stock"
-msgstr ""
-
-#: templates/prices.php:104 templates/prices.php:107 templates/prices.php:168
-msgctxt "model as in product variation such as by color"
-msgid "Displaying prices for model:"
-msgstr ""
-
-#: templates/product.php:288 templates/product.php:450
+#: templates/product.php:292 templates/product.php:465
+#, php-format
 msgid "%s thumbnail image"
 msgstr ""
 
-#: templates/product.php:325 templates/product.php:491
+#: templates/product.php:331
+msgid "Get it for"
+msgstr ""
+
+#: templates/product.php:333 templates/product.php:506
 msgid "Buy from"
 msgstr ""
 
-#: templates/product.php:340 templates/product.php:475
-msgctxt "site credits"
-msgid "powered by"
-msgstr ""
-
-#: templates/product.php:345
+#: templates/product.php:360
 msgid "key <abbr title=\"specifications\">specs</abbr>"
 msgstr ""
 
-#: templates/product.php:346 templates/product.php:519
+#: templates/product.php:361 templates/product.php:534
 msgid "reviews"
 msgstr ""
 
-#: templates/product.php:347 templates/product.php:520
+#: templates/product.php:362 templates/product.php:535
 msgid "prices"
 msgstr ""
 
-#: templates/product.php:518
+#: templates/product.php:533
 msgid ""
 "key <abbr title=\"specifications\" style=\"border-bottom:0\">specs</abbr>"
 msgstr ""
@@ -584,6 +590,7 @@ msgid "Get better reviews from people who actually have this product!"
 msgstr ""
 
 #: templates/ratings.php:135 templates/ratings.php:212
+#, php-format
 msgid "Review the %s"
 msgstr ""
 
@@ -604,10 +611,6 @@ msgid "Check back soon!"
 msgstr ""
 
 #: templates/specs.php:130 templates/specs.php:168
+#, php-format
 msgid "%s specifications"
-msgstr ""
-
-#: templates/specs.php:131 templates/specs.php:169
-msgctxt "product specifications"
-msgid "see all <abbr>specs</abbr>"
 msgstr ""
